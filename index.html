@@ -199,6 +199,7 @@ const LEVELS = [90,80,70,60,50,40,30,20,10,1];
 const supabase = createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $ = id => document.getElementById(id);
 let authSession = null, profile = null, currentQuestion = null, gameToken = null, currentIndex = 0, gameStartedAt = 0, lifelineUsed = false, authMode = "signup", boardPeriod = "all", toastTimer = null, drawTimer = null, clockInterval = null, questionDeadline = 0, questionTimeLimit = 30, answerSubmitting = false, lastResult = null;
+let gameMode = "classic", challengeDate = null, totalMistakes = 0, puzzleState = null, archiveDates = [];
 const guestKey = "fqc_guest_device_v1", guestUsedKey = "fqc_guest_game_used_v1", activeKey = "fqc_active_game_v1";
 
 function guestId(){
@@ -213,7 +214,7 @@ function notify(message){
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3300);
 }
 function showView(id){
-  ["homeView","drawView","quizView","resultView","boardView"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
+  ["homeView","drawView","quizView","resultView","puzzleView","archiveView","boardView"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function openAuth(mode="signup"){
@@ -271,7 +272,7 @@ async function checkHealth(){
 }
 function persistGameSnapshot(question,index,extra={}){
   if(!gameToken||!question)return;
-  try{sessionStorage.setItem(activeKey,JSON.stringify({token:gameToken,question,index,startedAt:gameStartedAt,lifelineUsed:lifelineUsed,savedAt:Date.now(),...extra}));}catch{}
+  try{sessionStorage.setItem(activeKey,JSON.stringify({token:gameToken,question,index,startedAt:gameStartedAt,lifelineUsed:lifelineUsed,gameMode,challengeDate,totalMistakes,savedAt:Date.now(),...extra}));}catch{}
 }
 function persistGame(){persistGameSnapshot(currentQuestion,currentIndex);}
 function clearPersistedGame(){sessionStorage.removeItem(activeKey);}
@@ -280,6 +281,7 @@ async function resumeGame(){
     const saved=JSON.parse(sessionStorage.getItem(activeKey)||"null");
     if(saved && saved.token && Date.now()-saved.savedAt<30*60*1000){
       gameToken=saved.token;currentQuestion=saved.question;currentIndex=saved.index;gameStartedAt=saved.startedAt;lifelineUsed=!!saved.lifelineUsed;
+      gameMode=saved.gameMode||"classic";challengeDate=saved.challengeDate||null;totalMistakes=Number(saved.totalMistakes||0);
       if(saved.completedResult){
         showResult(saved.completedResult.result==="win",saved.completedResult);
         return true;
@@ -350,16 +352,21 @@ function startDraw(){
   showView("drawView");
   drawTimer=setTimeout(revealDraw,1450);
 }
-async function startGame(){
+async function startGame(archiveDate=null){
   if(!currentUser() && isGuestUsed()){openAuth("signup");return;}
   $("playButton").disabled=true;
   try{
-    const data=await quizApi({action:"start",guest_id:currentUser()?undefined:guestId()});
+    const payload={action:"start"};
+    if(currentUser()) payload.challenge_date=archiveDate||undefined;
+    else payload.guest_id=guestId();
+    const data=await quizApi(payload);
     stopQuestionClock();answerSubmitting=false;gameToken=data.token;currentQuestion=data.question;currentIndex=0;gameStartedAt=Date.now();lifelineUsed=false;lastResult=null;
+    gameMode=data.game_mode||"classic";challengeDate=data.challenge_date||null;totalMistakes=0;
     if(!currentUser()) localStorage.setItem(guestUsedKey,"1");
     persistGame();startDraw();
   }catch(e){
     if(e.data?.code==="GUEST_GAME_USED"){localStorage.setItem(guestUsedKey,"1");renderNav();openAuth("signup");}
+    else if(e.data?.code==="DAILY_COMPLETED"){notify("You've completed today's Daily Challenge. Come back after 8am tomorrow, or browse the archive.");loadStats();}
     else {$("homeStatus").textContent=e.message;notify(e.message);}
   }finally{$("playButton").disabled=false;renderNav();}
 }
@@ -371,11 +378,11 @@ function renderQuestion(){
   $("questionNumber").textContent="CHALLENGE "+(currentIndex+1)+" OF 10";
   $("questionText").textContent=currentQuestion.question;
   $("feedback").classList.add("hidden");$("quizError").textContent="";
-  const canLifeline=currentIndex>=4&&currentIndex<9&&currentQuestion.question_type==="multiple_choice";
+  const canLifeline=currentIndex>=2&&currentIndex<9&&currentQuestion.question_type==="multiple_choice";
   $("lifelineArea").classList.toggle("hidden",!canLifeline);
   $("lifelineButton").classList.toggle("hidden",lifelineUsed);
   $("lifelineButton").disabled=false;
-  $("lifelineText").textContent=lifelineUsed?"50/50 used — two incorrect options removed.":"Two incorrect answers will be taken off the board.";
+  $("lifelineText").textContent=lifelineUsed?"50/50 used — two incorrect options removed.":"Unlocked from the 70% stage. Remove two incorrect options once per game.";
   const area=$("answers");area.replaceChildren();
   if(currentQuestion.question_type==="typed_answer"){
     const form=document.createElement("form");form.className="typed";
@@ -392,6 +399,9 @@ function renderQuestion(){
       b.append(letter,text);b.addEventListener("click",()=>submitAnswer(value,area));area.append(b);
     });
   }
+  $("dailyRunInfo").classList.toggle("hidden",!(gameMode==="daily"||gameMode==="archive"));
+  $("dailyRunMode").textContent=gameMode==="archive"?"ARCHIVE CHALLENGE":"DAILY CHALLENGE";
+  $("dailyMistakes").textContent=totalMistakes+" MISTAKE"+(totalMistakes===1?"":"S")+" SO FAR";
   persistGame();
 }
 function addSource(name,url){
@@ -400,7 +410,7 @@ function addSource(name,url){
   try{const u=new URL(url);if(u.protocol!=="https:"&&u.protocol!=="http:")return;a.href=u.href;a.textContent="SOURCE: "+(name||u.hostname)+" ↗";a.classList.remove("hidden");}catch{}
 }
 async function useLifeline(){
-  if(lifelineUsed||currentIndex<4||currentIndex>=9||currentQuestion?.question_type!=="multiple_choice")return;
+  if(lifelineUsed||currentIndex<2||currentIndex>=9||currentQuestion?.question_type!=="multiple_choice")return;
   const b=$("lifelineButton");b.disabled=true;b.textContent="APPLYING 50/50…";$("answers").querySelectorAll("button").forEach(x=>x.disabled=true);
   try{const d=await quizApi({action:"lifeline",token:gameToken});if(!Array.isArray(d.options)||d.options.length!==2)throw new Error("The lifeline response was invalid.");currentQuestion.options=d.options;lifelineUsed=true;renderQuestion();}
   catch(e){b.disabled=false;b.textContent="USE 50/50 LIFELINE";$("answers").querySelectorAll("button").forEach(x=>x.disabled=false);$("quizError").textContent=e.message;}
@@ -412,20 +422,26 @@ async function submitAnswer(answer,container){
   $("quizError").textContent="";container.querySelectorAll("button,input").forEach(x=>x.disabled=true);$("lifelineArea").classList.add("hidden");
   try{
     const data=await quizApi({action:"answer",token:gameToken,answer:cleaned});lastResult=data;
+    totalMistakes=Number(data.mistakes_total??totalMistakes);
     if(data.finished) persistGameSnapshot(currentQuestion,currentIndex,{completedResult:data});
-    else if(data.correct&&data.next_question) persistGameSnapshot(data.next_question,currentIndex+1);
+    else if(data.next_question) persistGameSnapshot(data.next_question,currentIndex+1,{totalMistakes});
     $("feedback").classList.remove("hidden","good","bad");$("feedback").classList.add(data.correct?"good":"bad");
-    $("fbHead").textContent=data.time_up?"TIME IS UP — FULL-TIME":(data.correct?"CORRECT — YOU'RE THROUGH":"NOT THIS TIME");
-    $("fbCopy").textContent=data.time_up?("The "+data.time_limit_seconds+"-second clock has reached zero. The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||"")):(data.correct?(data.explanation||"That's right. The next ball is waiting."):"The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||""));
+    $("fbHead").textContent=data.time_up?(data.daily_mode?"TIME UP — KEEP GOING":"TIME IS UP — FULL-TIME"):(data.correct?"CORRECT — YOU'RE THROUGH":(data.daily_mode?"MISS COUNTED — KEEP GOING":"NOT THIS TIME"));
+    $("fbCopy").textContent=data.time_up
+      ?("The "+data.time_limit_seconds+"-second clock has reached zero. The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||"")+(data.daily_mode?" Mistakes so far: "+totalMistakes+".":""))
+      :(data.correct?(data.explanation||"That's right. The next ball is waiting.")
+        :("The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||"")+(data.daily_mode?" Your Daily Challenge continues. Mistakes so far: "+totalMistakes+".":"")));
+    $("dailyMistakes").textContent=totalMistakes+" MISTAKE"+(totalMistakes===1?"":"S")+" SO FAR";
     addSource(data.source_name,data.source_url);
     const next=$("continueButton");next.onclick=null;
-    if(!data.correct){next.textContent="VIEW YOUR RESULT";next.onclick=()=>showResult(false,data);}
-    else if(data.finished&&data.result==="win"){next.textContent="VIEW 1% RESULT";next.onclick=()=>showResult(true,data);}
+    if(data.finished){next.textContent=data.daily_mode?"VIEW DAILY RESULT":(data.result==="win"?"VIEW 1% RESULT":"VIEW YOUR RESULT");next.onclick=()=>showResult(data.result==="win",data);}
+    else if(data.daily_mode){next.textContent="NEXT QUESTION";next.onclick=()=>{answerSubmitting=false;currentIndex++;currentQuestion=data.next_question;persistGame();startDraw();};}
+    else if(!data.correct){next.textContent="VIEW YOUR RESULT";next.onclick=()=>showResult(false,data);}
     else{next.textContent="DRAW THE NEXT BALL";next.onclick=()=>{answerSubmitting=false;currentIndex++;currentQuestion=data.next_question;persistGame();startDraw();};}
   }catch(e){
     answerSubmitting=false;
     $("quizError").textContent=e.message;container.querySelectorAll("button,input").forEach(x=>x.disabled=false);
-    $("lifelineArea").classList.toggle("hidden",!(currentIndex>=4&&currentIndex<9&&currentQuestion?.question_type==="multiple_choice"&&!lifelineUsed));
+    $("lifelineArea").classList.toggle("hidden",!(currentIndex>=2&&currentIndex<9&&currentQuestion?.question_type==="multiple_choice"&&!lifelineUsed));
     renderClock();
     if(!clockInterval && questionDeadline>Date.now()) clockInterval=setInterval(renderClock,200);
   }
@@ -433,20 +449,30 @@ async function submitAnswer(answer,container){
 function showResult(won,data){
   stopQuestionClock();answerSubmitting=false;
   clearPersistedGame();gameToken=null;
+  const isDaily=gameMode==="daily"||gameMode==="archive"||!!data?.daily_mode;
+  const mistakes=Number(data?.mistakes_total??totalMistakes);
+  const correctCount=Number(data?.correct_count_so_far??(10-mistakes));
   const failed=data?.difficulty||LEVELS[currentIndex];
-  const reached=won?10:Math.max(0,currentIndex);
-  $("resultTitle").textContent=won?"YOU REACHED THE 1% FINAL":"FULL-TIME";
-  $("resultNumber").textContent=won?"1%":String(failed)+"%";
-  $("resultCopy").textContent=won?"Incredible. You cleared every stage and solved the final typed-answer challenge.":("Your run ended at the "+failed+"% challenge. "+(data?.explanation||"Another matchday is waiting."));
-  $("statStages").textContent=(won?10:currentIndex)+" / 10";
-  $("statReached").textContent=won?"1%":(currentIndex===0?"Starting round":LEVELS[currentIndex-1]+"%");
+  $("resultTitle").textContent=isDaily?"DAILY CHALLENGE COMPLETE":(won?"YOU REACHED THE 1% FINAL":"FULL-TIME");
+  $("resultNumber").textContent=isDaily?correctCount+"/10":(won?"1%":String(failed)+"%");
+  $("resultCopy").textContent=isDaily
+    ?("You reached the 1% typed-answer final and got "+correctCount+" out of 10 questions right, with "+mistakes+" mistake"+(mistakes===1?"":"s")+". "+(won?"You also solved the final question — outstanding.":"The final question was attempted. Come back at 8am for a fresh challenge."))
+    :(won?"Incredible. You cleared every stage and solved the final typed-answer challenge.":("Your run ended at the "+failed+"% challenge. "+(data?.explanation||"Another matchday is waiting.")));
+  $("statStages").textContent=isDaily?correctCount+" / 10 correct":(won?"10":currentIndex)+" / 10";
+  $("statReached").textContent=isDaily?"1% FINAL ATTEMPTED":(won?"1%":(currentIndex===0?"Starting round":LEVELS[currentIndex-1]+"%"));
+  $("statMistakes").textContent=isDaily?String(mistakes):"—";
   $("statAccount").textContent=currentUser()?"SIGNED IN":"GUEST";
-  $("statRank").textContent=data?.score_saved?"SCORE SAVED":"—";
+  $("statRank").textContent=data?.score_saved?(isDaily?"DAILY RESULT SAVED":"SCORE SAVED"):"—";
   const needsAccount=!currentUser()&&isGuestUsed();
   $("resultGate").classList.toggle("hidden",!needsAccount);
-  $("againButton").textContent=needsAccount?"JOIN TO PLAY AGAIN":"PLAY ANOTHER GAME";
-  $("againButton").onclick=()=>{if(!currentUser()&&isGuestUsed())openAuth("signup");else startGame();};
-  if(currentUser()&&data?.score_saved)notify("Your verified result has been saved to your player record.");
+  $("againButton").textContent=needsAccount?"JOIN TO PLAY AGAIN":(gameMode==="daily"?"BACK TO CLUBHOUSE":(gameMode==="archive"?"BACK TO ARCHIVE":"PLAY ANOTHER GAME"));
+  $("againButton").onclick=()=>{
+    if(!currentUser()&&isGuestUsed())openAuth("signup");
+    else if(gameMode==="archive")openArchive();
+    else if(gameMode==="daily")showView("homeView");
+    else startGame();
+  };
+  if(currentUser()&&data?.score_saved){notify("Your Daily Challenge result has been saved.");loadStats();}
   showView("resultView");
 }
 async function loadLeaderboard(period="all"){
