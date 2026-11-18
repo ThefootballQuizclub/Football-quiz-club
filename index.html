@@ -1,148 +1,561 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Football Quiz Club</title>
+<title>Football Quiz Club</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #071a12;
-            color: white;
-            min-height: 100vh;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #061a12;
+        color: white;
+        min-height: 100vh;
+    }
 
-        header {
-            padding: 24px 20px;
-            text-align: center;
-            background: #0b2619;
-            border-bottom: 2px solid #18c76e;
-        }
+    header {
+        padding: 22px;
+        text-align: center;
+        background: #0a281b;
+        border-bottom: 2px solid #19d477;
+    }
 
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-        }
+    .logo {
+        font-size: 30px;
+        font-weight: bold;
+    }
 
-        .logo span {
-            color: #18c76e;
-        }
+    .logo span {
+        color: #19d477;
+    }
 
-        main {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 60px 20px;
-            text-align: center;
-        }
+    .container {
+        max-width: 750px;
+        margin: auto;
+        padding: 45px 20px;
+    }
 
-        .badge {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: #123d28;
-            color: #18c76e;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
+    .screen {
+        text-align: center;
+    }
 
+    .hidden {
+        display: none;
+    }
+
+    .badge {
+        display: inline-block;
+        background: #103d29;
+        color: #19d477;
+        padding: 9px 18px;
+        border-radius: 30px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 46px;
+        margin: 15px 0;
+    }
+
+    h2 {
+        font-size: 30px;
+        margin-bottom: 30px;
+    }
+
+    p {
+        color: #c7d5ce;
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    button {
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .main-button {
+        margin-top: 25px;
+        padding: 16px 35px;
+        background: #19d477;
+        color: #061a12;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .main-button:hover {
+        background: #2ee58a;
+    }
+
+    .progress {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 35px;
+    }
+
+    .level {
+        padding: 9px 13px;
+        background: #103022;
+        color: #8ea79b;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .level.active {
+        background: #19d477;
+        color: #061a12;
+        font-weight: bold;
+    }
+
+    .question-box {
+        background: #0b261a;
+        border: 1px solid #183f2c;
+        border-radius: 16px;
+        padding: 35px 25px;
+    }
+
+    .question-number {
+        color: #19d477;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .question {
+        font-size: 27px;
+        line-height: 1.4;
+        margin-bottom: 30px;
+    }
+
+    .answers {
+        display: grid;
+        gap: 12px;
+    }
+
+    .answer {
+        width: 100%;
+        padding: 17px;
+        border-radius: 10px;
+        background: #123524;
+        color: white;
+        font-size: 17px;
+        text-align: left;
+        border: 1px solid #1d4d36;
+    }
+
+    .answer:hover {
+        background: #174a31;
+        border-color: #19d477;
+    }
+
+    .answer.correct {
+        background: #126a3b;
+        border-color: #19d477;
+    }
+
+    .answer.wrong {
+        background: #702b2b;
+        border-color: #e35b5b;
+    }
+
+    .result-number {
+        font-size: 80px;
+        color: #19d477;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    .small {
+        color: #8ea79b;
+        font-size: 14px;
+    }
+
+    footer {
+        text-align: center;
+        padding: 25px;
+        color: #62766d;
+        font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
         h1 {
-            font-size: 48px;
-            margin: 10px 0 20px;
+            font-size: 36px;
         }
 
-        p {
-            font-size: 19px;
-            line-height: 1.6;
-            color: #c8d5ce;
+        .question {
+            font-size: 23px;
         }
 
-        .play-button {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 16px 35px;
-            background: #18c76e;
-            color: #071a12;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 10px;
+        .result-number {
+            font-size: 65px;
         }
-
-        .play-button:hover {
-            background: #25e580;
-        }
-
-        .levels {
-            margin-top: 55px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .level {
-            padding: 10px 15px;
-            background: #102d20;
-            border-radius: 8px;
-            color: #b8c9c0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: #718279;
-            font-size: 14px;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
 
-    <header>
-        <div class="logo">
-            Football <span>Quiz Club</span>
-        </div>
-    </header>
+<header>
+    <div class="logo">
+        Football <span>Quiz Club</span>
+    </div>
+</header>
 
-    <main>
+<div class="container">
 
-        <div class="badge">THE ULTIMATE FOOTBALL QUIZ</div>
+    <!-- HOME -->
+    <section id="homeScreen" class="screen">
+
+        <div class="badge">THE FOOTBALL CHALLENGE</div>
 
         <h1>Can you reach 1%?</h1>
 
         <p>
-            Test your football knowledge.
-            Start with the easier questions and fight your way
-            through increasingly difficult challenges.
+            Start with an easier football question and work
+            your way through increasingly difficult challenges.
         </p>
 
-        <a href="#" class="play-button">
+        <button class="main-button" onclick="startGame()">
             PLAY THE QUIZ
-        </a>
+        </button>
 
-        <div class="levels">
-            <div class="level">90%</div>
-            <div class="level">80%</div>
-            <div class="level">70%</div>
-            <div class="level">50%</div>
-            <div class="level">30%</div>
-            <div class="level">10%</div>
-            <div class="level">5%</div>
-            <div class="level">1%</div>
+        <p class="small">
+            9 questions • One chance • Can you make the final?
+        </p>
+
+    </section>
+
+
+    <!-- QUIZ -->
+    <section id="quizScreen" class="screen hidden">
+
+        <div class="progress" id="progress"></div>
+
+        <div class="question-box">
+
+            <div class="question-number" id="questionNumber"></div>
+
+            <div class="question" id="question"></div>
+
+            <div class="answers" id="answers"></div>
+
         </div>
 
-    </main>
+    </section>
 
-    <footer>
-        © 2026 Football Quiz Club
-    </footer>
+
+    <!-- RESULT -->
+    <section id="resultScreen" class="screen hidden">
+
+        <div class="badge">YOUR RESULT</div>
+
+        <h1 id="resultTitle"></h1>
+
+        <div class="result-number" id="resultPercentage"></div>
+
+        <p id="resultMessage"></p>
+
+        <button class="main-button" onclick="startGame()">
+            PLAY AGAIN
+        </button>
+
+        <p class="small">
+            Accounts and saved scores are coming next.
+        </p>
+
+    </section>
+
+</div>
+
+<footer>
+    © 2026 Football Quiz Club
+</footer>
+
+
+<script>
+
+const questions = [
+
+    {
+        level: "90%",
+        question: "Which country won the 1966 FIFA World Cup?",
+        answers: [
+            "Brazil",
+            "England",
+            "Germany",
+            "Argentina"
+        ],
+        correct: 1
+    },
+
+    {
+        level: "80%",
+        question: "Which club did Lionel Messi join as a professional in 2004?",
+        answers: [
+            "Real Madrid",
+            "Manchester United",
+            "Barcelona",
+            "Inter Milan"
+        ],
+        correct: 2
+    },
+
+    {
+        level: "70%",
+        question: "Which country did Zinedine Zidane represent at international level?",
+        answers: [
+            "France",
+            "Italy",
+            "Spain",
+            "Belgium"
+        ],
+        correct: 0
+    },
+
+    {
+        level: "60%",
+        question: "Which club plays its home matches at Anfield?",
+        answers: [
+            "Everton",
+            "Liverpool",
+            "Manchester City",
+            "Leeds United"
+        ],
+        correct: 1
+    },
+
+    {
+        level: "50%",
+        question: "Which player scored the famous 'Hand of God' goal at the 1986 World Cup?",
+        answers: [
+            "Pelé",
+            "Diego Maradona",
+            "Johan Cruyff",
+            "Michel Platini"
+        ],
+        correct: 1
+    },
+
+    {
+        level: "30%",
+        question: "Which club won the first European Cup in 1956?",
+        answers: [
+            "Real Madrid",
+            "AC Milan",
+            "Benfica",
+            "Ajax"
+        ],
+        correct: 0
+    },
+
+    {
+        level: "10%",
+        question: "Which English club was the first to win the European Cup?",
+        answers: [
+            "Liverpool",
+            "Manchester United",
+            "Nottingham Forest",
+            "Chelsea"
+        ],
+        correct: 1
+    },
+
+    {
+        level: "5%",
+        question: "Which country has won the men's FIFA World Cup the most times?",
+        answers: [
+            "Germany",
+            "Italy",
+            "Argentina",
+            "Brazil"
+        ],
+        correct: 3
+    },
+
+    {
+        level: "1%",
+        question: "A footballer has played for Manchester United, Real Madrid and Juventus. Which player could this be?",
+        answers: [
+            "David Beckham",
+            "Cristiano Ronaldo",
+            "Wayne Rooney",
+            "Ryan Giggs"
+        ],
+        correct: 1
+    }
+
+];
+
+let currentQuestion = 0;
+let gameOver = false;
+
+
+function startGame() {
+
+    currentQuestion = 0;
+    gameOver = false;
+
+    document.getElementById("homeScreen").classList.add("hidden");
+    document.getElementById("resultScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+
+    showQuestion();
+}
+
+
+function showQuestion() {
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("questionNumber").textContent =
+        "Challenge " + (currentQuestion + 1) + " of " + questions.length;
+
+    document.getElementById("question").textContent =
+        q.question;
+
+    const progress = document.getElementById("progress");
+
+    progress.innerHTML = "";
+
+    questions.forEach((question, index) => {
+
+        const level = document.createElement("div");
+
+        level.className = "level";
+
+        if (index === currentQuestion) {
+            level.classList.add("active");
+        }
+
+        level.textContent = question.level;
+
+        progress.appendChild(level);
+
+    });
+
+
+    const answers = document.getElementById("answers");
+
+    answers.innerHTML = "";
+
+
+    q.answers.forEach((answer, index) => {
+
+        const button = document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent = answer;
+
+        button.onclick = function() {
+
+            checkAnswer(index, button);
+
+        };
+
+        answers.appendChild(button);
+
+    });
+
+}
+
+
+function checkAnswer(selected, button) {
+
+    if (gameOver) return;
+
+    const q = questions[currentQuestion];
+
+    const allButtons =
+        document.querySelectorAll(".answer");
+
+    allButtons.forEach(btn => {
+        btn.disabled = true;
+    });
+
+
+    if (selected === q.correct) {
+
+        button.classList.add("correct");
+
+        setTimeout(function() {
+
+            currentQuestion++;
+
+            if (currentQuestion >= questions.length) {
+
+                showResult(true);
+
+            } else {
+
+                showQuestion();
+
+            }
+
+        }, 700);
+
+    } else {
+
+        button.classList.add("wrong");
+
+        allButtons[q.correct].classList.add("correct");
+
+        gameOver = true;
+
+        setTimeout(function() {
+
+            showResult(false);
+
+        }, 900);
+
+    }
+
+}
+
+
+function showResult(won) {
+
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("resultScreen").classList.remove("hidden");
+
+    const percentage =
+        won ? "1%" : questions[currentQuestion].level;
+
+    document.getElementById("resultPercentage").textContent =
+        percentage;
+
+
+    if (won) {
+
+        document.getElementById("resultTitle").textContent =
+            "YOU REACHED 1%!";
+
+        document.getElementById("resultMessage").textContent =
+            "Outstanding. You made it through every challenge.";
+
+    } else {
+
+        document.getElementById("resultTitle").textContent =
+            "QUIZ OVER";
+
+        document.getElementById("resultMessage").textContent =
+            "You reached the " + percentage +
+            " challenge. Can you go further next time?";
+
+    }
+
+}
+
+</script>
 
 </body>
 </html>
