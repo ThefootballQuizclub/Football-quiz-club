@@ -1,674 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Football Quiz Club</title>
-
-<style>
-* { box-sizing: border-box; }
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #061a12;
-    color: white;
-    min-height: 100vh;
-}
-
-header {
-    padding: 22px;
-    text-align: center;
-    background: #0a281b;
-    border-bottom: 2px solid #19d477;
-}
-
-.logo {
-    font-size: 30px;
-    font-weight: bold;
-}
-
-.logo span { color: #19d477; }
-
-.container {
-    max-width: 760px;
-    margin: auto;
-    padding: 35px 20px;
-}
-
-.screen { text-align: center; }
-.hidden { display: none; }
-
-.badge {
-    display: inline-block;
-    background: #103d29;
-    color: #19d477;
-    padding: 9px 18px;
-    border-radius: 30px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-h1 {
-    font-size: 44px;
-    margin: 15px 0;
-}
-
-p {
-    color: #c7d5ce;
-    font-size: 18px;
-    line-height: 1.6;
-}
-
-button {
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-.main-button {
-    margin-top: 25px;
-    padding: 16px 35px;
-    background: #19d477;
-    color: #061a12;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.main-button:hover {
-    background: #2ee58a;
-}
-
-.progress {
-    display: flex;
-    justify-content: center;
-    gap: 7px;
-    flex-wrap: wrap;
-    margin-bottom: 25px;
-}
-
-.level {
-    padding: 8px 11px;
-    background: #103022;
-    color: #8ea79b;
-    border-radius: 7px;
-    font-size: 13px;
-}
-
-.level.active {
-    background: #19d477;
-    color: #061a12;
-    font-weight: bold;
-}
-
-.question-box {
-    background: #0b261a;
-    border: 1px solid #183f2c;
-    border-radius: 16px;
-    padding: 32px 24px;
-}
-
-.question-number {
-    color: #19d477;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.question {
-    font-size: 26px;
-    line-height: 1.45;
-    margin-bottom: 28px;
-}
-
-.answers {
-    display: grid;
-    gap: 12px;
-}
-
-.answer {
-    width: 100%;
-    padding: 17px;
-    border-radius: 10px;
-    background: #123524;
-    color: white;
-    font-size: 17px;
-    text-align: left;
-    border: 1px solid #1d4d36;
-}
-
-.answer:hover {
-    background: #174a31;
-    border-color: #19d477;
-}
-
-.answer.correct {
-    background: #126a3b;
-    border-color: #19d477;
-}
-
-.answer.wrong {
-    background: #702b2b;
-    border-color: #e35b5b;
-}
-
-.final-question {
-    font-size: 25px;
-    line-height: 1.5;
-    text-align: left;
-    background: #102d20;
-    padding: 22px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-.clue {
-    margin: 10px 0;
-    color: #d7e3dd;
-}
-
-.answer-input {
-    width: 100%;
-    padding: 16px;
-    border-radius: 10px;
-    border: 2px solid #28563e;
-    background: #071a12;
-    color: white;
-    font-size: 18px;
-    margin-top: 15px;
-    outline: none;
-}
-
-.answer-input:focus {
-    border-color: #19d477;
-}
-
-.result-number {
-    font-size: 78px;
-    color: #19d477;
-    font-weight: bold;
-    margin: 20px 0;
-}
-
-.small {
-    color: #8ea79b;
-    font-size: 14px;
-}
-
-footer {
-    text-align: center;
-    padding: 25px;
-    color: #62766d;
-    font-size: 14px;
-}
-
-@media (max-width: 600px) {
-    h1 { font-size: 36px; }
-    .question { font-size: 23px; }
-    .result-number { font-size: 65px; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#061a12">
+  <meta name="description" content="Ten stages of football questions. Can you make it to the 1% final?">
+  <title>Football Quiz Club</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #061a12;
+      --panel: #0b261a;
+      --panel-2: #103022;
+      --line: #1b4933;
+      --green: #19d477;
+      --green-soft: #a1f1c5;
+      --text: #f6fbf8;
+      --muted: #a9bdb2;
+      --red: #ff7777;
+      --gold: #f2d27a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -15%, rgba(25,212,119,.13), transparent 50%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    .site-header {
+      border-bottom: 1px solid rgba(25,212,119,.28);
+      background: rgba(7, 31, 21, .88);
+    }
+    .header-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 850; letter-spacing: -.04em; font-size: 19px; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 11px;
+      display: grid; place-items: center;
+      color: #052014; background: var(--green); font-size: 13px; font-weight: 950;
+      box-shadow: 0 0 26px rgba(25,212,119,.18);
+    }
+    .brand span:last-child { color: var(--green); }
+    .header-tag { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-align: right; }
+    main { width: min(100% - 32px, 820px); margin: 0 auto; padding: 54px 0 70px; }
+    .screen { animation: appear .28s ease both; }
+    .hidden { display: none !important; }
+    @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .hero { text-align: center; padding: 24px 8px 34px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--green-soft); background: rgba(25,212,119,.09);
+      border: 1px solid rgba(25,212,119,.24);
+      padding: 8px 13px; border-radius: 999px;
+      font-size: 11px; font-weight: 850; letter-spacing: .15em;
+    }
+    h1 { margin: 19px 0 12px; font-size: clamp(37px, 7vw, 62px); line-height: 1.02; letter-spacing: -.055em; }
+    h1 .accent { color: var(--green); }
+    .intro { max-width: 560px; margin: 0 auto; color: var(--muted); font-size: 17px; line-height: 1.7; }
+    .status-card {
+      max-width: 570px; margin: 28px auto 0; padding: 15px 17px;
+      display: flex; align-items: flex-start; gap: 12px; text-align: left;
+      border: 1px solid var(--line); border-radius: 14px; background: rgba(11,38,26,.82);
+    }
+    .status-dot {
+      margin-top: 5px; width: 9px; height: 9px; border-radius: 50%;
+      flex: 0 0 auto; background: var(--gold); box-shadow: 0 0 12px currentColor;
+    }
+    .status-card.ready .status-dot { background: var(--green); }
+    .status-title { font-size: 14px; font-weight: 850; margin-bottom: 3px; }
+    .status-copy { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .primary {
+      display: inline-flex; justify-content: center; align-items: center; gap: 10px;
+      min-height: 54px; padding: 0 26px; margin-top: 25px;
+      border: 0; border-radius: 12px; background: var(--green); color: #042014;
+      font-size: 14px; font-weight: 950; letter-spacing: .07em;
+      box-shadow: 0 10px 28px rgba(25,212,119,.14);
+      transition: transform .15s ease, background .15s ease;
+    }
+    .primary:not(:disabled):hover { background: #48e995; transform: translateY(-2px); }
+    .levels-wrap { margin: 28px auto 0; }
+    .levels-label { color: #789386; font-size: 10px; font-weight: 850; letter-spacing: .16em; margin-bottom: 12px; }
+    .levels { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
+    .level-pill {
+      min-width: 48px; padding: 9px 10px; border-radius: 8px;
+      border: 1px solid #1a3c2c; color: #9cb2a5; background: #0a2418;
+      font-size: 12px; font-weight: 850;
+    }
+    .level-pill.active { color: #052014; border-color: var(--green); background: var(--green); }
+    .subnote { margin-top: 21px; color: #71877b; font-size: 12px; line-height: 1.6; }
+    .quiz-top { margin-bottom: 18px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+    .quiz-top-label { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+    .progress { display: grid; grid-template-columns: repeat(10, 1fr); gap: 7px; margin: 0 0 20px; }
+    .progress-step { height: 5px; border-radius: 9px; background: #183526; }
+    .progress-step.done, .progress-step.current { background: var(--green); }
+    .question-card {
+      padding: clamp(22px, 5vw, 36px); border: 1px solid var(--line);
+      border-radius: 20px; background: linear-gradient(145deg, rgba(14,46,31,.98), rgba(8,31,21,.98));
+      box-shadow: 0 22px 70px rgba(0,0,0,.18);
+    }
+    .question-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+    .stage-badge { color: var(--green); font-weight: 950; font-size: 13px; letter-spacing: .1em; }
+    .category-badge { color: #a3b9ac; background: #173b29; border: 1px solid #24543a; border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 750; }
+    .question-number { margin: 0 0 10px; color: #8ca799; font-size: 12px; font-weight: 800; letter-spacing: .1em; }
+    .question-text { margin: 0 0 27px; font-size: clamp(22px, 4vw, 31px); line-height: 1.35; letter-spacing: -.03em; }
+    .answer-list { display: grid; gap: 11px; }
+    .answer-option {
+      width: 100%; min-height: 58px; padding: 14px 17px; text-align: left;
+      color: var(--text); background: #123524; border: 1px solid #24523a;
+      border-radius: 11px; font-size: 16px; font-weight: 700;
+      transition: background .12s ease, border-color .12s ease, transform .12s ease;
+    }
+    .answer-option:not(:disabled):hover { background: #194a32; border-color: var(--green); transform: translateY(-1px); }
+    .typed-form { display: flex; gap: 10px; flex-wrap: wrap; }
+    .typed-input {
+      flex: 1 1 240px; min-width: 0; min-height: 56px; padding: 0 16px;
+      border-radius: 11px; border: 1px solid #326247; background: #061a12;
+      color: white; font-size: 16px; outline: none;
+    }
+    .typed-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(25,212,119,.1); }
+    .typed-form .primary { margin: 0; }
+    .feedback {
+      margin-top: 20px; padding: 17px; border-radius: 13px;
+      background: #102d20; border: 1px solid #24543a;
+    }
+    .feedback.good { border-color: rgba(25,212,119,.6); }
+    .feedback.bad { border-color: rgba(255,119,119,.5); }
+    .feedback-heading { font-weight: 900; font-size: 16px; margin-bottom: 6px; }
+    .feedback-copy { color: #c0d0c7; font-size: 14px; line-height: 1.6; }
+    .source-link { display: inline-block; margin-top: 8px; color: var(--green-soft); font-size: 12px; }
+    .feedback-action { margin-top: 13px; }
+    .result-card {
+      text-align: center; padding: clamp(25px, 5vw, 45px);
+      border: 1px solid var(--line); border-radius: 20px;
+      background: linear-gradient(145deg, #0e2e1f, #081f15);
+    }
+    .result-number { margin: 15px 0; color: var(--green); font-size: clamp(64px, 12vw, 96px); line-height: 1; font-weight: 950; letter-spacing: -.07em; }
+    .result-copy { max-width: 520px; margin: 0 auto; color: var(--muted); line-height: 1.7; }
+    .error-copy { min-height: 20px; margin-top: 12px; color: var(--red); font-size: 13px; }
+    footer { border-top: 1px solid rgba(25,212,119,.12); padding: 22px; text-align: center; color: #60766a; font-size: 11px; letter-spacing: .06em; }
+    @media (max-width: 560px) {
+      main { padding-top: 34px; }
+      .header-inner { padding: 15px 16px; }
+      .header-tag { max-width: 120px; line-height: 1.4; }
+      .question-card { border-radius: 15px; }
+      .answer-option { min-height: 54px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
 </head>
-
 <body>
-
-<header>
-    <div class="logo">
-        Football <span>Quiz Club</span>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand"><span class="brand-mark">FQC</span><span>Football <span>Quiz Club</span></span></div>
+      <div class="header-tag">THE FOOTBALL KNOWLEDGE CHALLENGE</div>
     </div>
-</header>
-
-<div class="container">
-
-<section id="homeScreen" class="screen">
-
-    <div class="badge">THE FOOTBALL CHALLENGE</div>
-
-    <h1>Can you reach 1%?</h1>
-
-    <p>
-        Ten questions. Increasing difficulty.
-        One final challenge where you must type the answer.
-    </p>
-
-    <button class="main-button" onclick="startGame()">
-        PLAY THE QUIZ
-    </button>
-
-    <p class="small">
-        90% → 80% → 70% → 60% → 50% → 40% → 30% → 20% → 10% → 1%
-    </p>
-
-</section>
-
-
-<section id="quizScreen" class="screen hidden">
-
-    <div class="progress" id="progress"></div>
-
-    <div class="question-box">
-
-        <div class="question-number" id="questionNumber"></div>
-
-        <div class="question" id="question"></div>
-
-        <div class="answers" id="answers"></div>
-
-    </div>
-
-</section>
-
-
-<section id="finalScreen" class="screen hidden">
-
-    <div class="badge">THE 1% FINAL</div>
-
-    <h1>Can you solve it?</h1>
-
-    <div class="final-question">
-
-        <div class="clue">• I played in the Champions League for three different clubs.</div>
-
-        <div class="clue">• I won the competition with one of them.</div>
-
-        <div class="clue">• I also played in England, Spain and Italy.</div>
-
-        <div class="clue">• I scored in a Champions League final.</div>
-
-        <div class="clue">• I am not Cristiano Ronaldo.</div>
-
-        <p>
-            Who am I?
-        </p>
-
-    </div>
-
-    <input
-        id="finalAnswer"
-        class="answer-input"
-        type="text"
-        placeholder="Type your answer..."
-        autocomplete="off"
-    >
-
-    <br>
-
-    <button class="main-button" onclick="checkFinalAnswer()">
-        SUBMIT ANSWER
-    </button>
-
-</section>
-
-
-<section id="resultScreen" class="screen hidden">
-
-    <div class="badge">YOUR RESULT</div>
-
-    <h1 id="resultTitle"></h1>
-
-    <div class="result-number" id="resultPercentage"></div>
-
-    <p id="resultMessage"></p>
-
-    <button class="main-button" onclick="startGame()">
-        PLAY AGAIN
-    </button>
-
-</section>
-
-</div>
-
-<footer>
-© 2026 Football Quiz Club
-</footer>
-
-
-<script>
-
-const questions = [
-
-{
-    level: "90%",
-    question: "Which club has won the most European Cups/UEFA Champions League titles?",
-    answers: [
-        "AC Milan",
-        "Liverpool",
-        "Real Madrid",
-        "Bayern Munich"
-    ],
-    correct: 2
-},
-
-{
-    level: "80%",
-    question: "Which player scored the winning goal in the 1999 UEFA Champions League final?",
-    answers: [
-        "Ole Gunnar Solskjær",
-        "Teddy Sheringham",
-        "David Beckham",
-        "Ryan Giggs"
-    ],
-    correct: 0
-},
-
-{
-    level: "70%",
-    question: "Which club became European champions in 1991 after winning the final on penalties against Marseille?",
-    answers: [
-        "Red Star Belgrade",
-        "Steaua București",
-        "PSV Eindhoven",
-        "Porto"
-    ],
-    correct: 0
-},
-
-{
-    level: "60%",
-    question: "Which player holds the all-time record for Champions League appearances?",
-    answers: [
-        "Iker Casillas",
-        "Cristiano Ronaldo",
-        "Lionel Messi",
-        "Thomas Müller"
-    ],
-    correct: 1
-},
-
-{
-    level: "50%",
-    question: "Which club lost consecutive European Cup finals in 1997 and 1998?",
-    answers: [
-        "Valencia",
-        "Juventus",
-        "Bayern Munich",
-        "Arsenal"
-    ],
-    correct: 1
-},
-
-{
-    level: "40%",
-    question: "Which club has appeared in more European Cup/Champions League finals than any other?",
-    answers: [
-        "AC Milan",
-        "Bayern Munich",
-        "Liverpool",
-        "Real Madrid"
-    ],
-    correct: 3
-},
-
-{
-    level: "30%",
-    question: "Which team won the 1974 European Cup final replay after the original match finished 1–1?",
-    answers: [
-        "Bayern Munich",
-        "Atlético Madrid",
-        "Ajax",
-        "Borussia Mönchengladbach"
-    ],
-    correct: 0
-},
-
-{
-    level: "20%",
-    question: "Which player has won the Champions League six times, all six with Real Madrid?",
-    answers: [
-        "Karim Benzema",
-        "Toni Kroos",
-        "Dani Carvajal",
-        "Sergio Ramos"
-    ],
-    correct: 2
-},
-
-{
-    level: "10%",
-    question: "Which club has a perfect record in European Cup/Champions League finals, having won both finals it played?",
-    answers: [
-        "Nottingham Forest",
-        "Ajax",
-        "Barcelona",
-        "Inter Milan"
-    ],
-    correct: 0
-}
-
-];
-
-let currentQuestion = 0;
-let gameOver = false;
-
-
-function startGame() {
-
-    currentQuestion = 0;
-    gameOver = false;
-
-    document.getElementById("homeScreen").classList.add("hidden");
-    document.getElementById("resultScreen").classList.add("hidden");
-    document.getElementById("finalScreen").classList.add("hidden");
-    document.getElementById("quizScreen").classList.remove("hidden");
-
-    showQuestion();
-}
-
-
-function showQuestion() {
-
-    const q = questions[currentQuestion];
-
-    document.getElementById("questionNumber").textContent =
-        "Challenge " + (currentQuestion + 1) + " of 10";
-
-    document.getElementById("question").textContent =
-        q.question;
-
-    const progress = document.getElementById("progress");
-
-    progress.innerHTML = "";
-
-    const allLevels = [
-        "90%", "80%", "70%", "60%", "50%",
-        "40%", "30%", "20%", "10%", "1%"
-    ];
-
-    allLevels.forEach((level, index) => {
-
-        const item = document.createElement("div");
-
-        item.className = "level";
-
-        if (index === currentQuestion) {
-            item.classList.add("active");
+  </header>
+
+  <main>
+    <section id="homeScreen" class="screen hero">
+      <div class="eyebrow">⚽ THE FOOTBALL CHALLENGE</div>
+      <h1>Can you reach <span class="accent">1%?</span></h1>
+      <p class="intro">Ten stages. Football questions that get tougher as you go. Nine multiple-choice rounds, then one final question where you type the answer.</p>
+
+      <div id="statusCard" class="status-card">
+        <span class="status-dot"></span>
+        <div>
+          <div id="statusTitle" class="status-title">Checking the quiz connection…</div>
+          <div id="statusCopy" class="status-copy">Connecting to the Football Quiz Club question bank.</div>
+        </div>
+      </div>
+
+      <button id="playButton" class="primary" type="button" disabled>CHECKING QUESTION BANK…</button>
+      <div id="homeError" class="error-copy" role="status"></div>
+
+      <div class="levels-wrap">
+        <div class="levels-label">THE TEN STAGES</div>
+        <div class="levels">
+          <span class="level-pill">90%</span><span class="level-pill">80%</span><span class="level-pill">70%</span>
+          <span class="level-pill">60%</span><span class="level-pill">50%</span><span class="level-pill">40%</span>
+          <span class="level-pill">30%</span><span class="level-pill">20%</span><span class="level-pill">10%</span>
+          <span class="level-pill">1%</span>
+        </div>
+      </div>
+      <div class="subnote">Built around modern football: the fact being tested must be from 1992 onwards.</div>
+    </section>
+
+    <section id="quizScreen" class="screen hidden">
+      <div class="quiz-top">
+        <div class="quiz-top-label">FOOTBALL QUIZ CLUB</div>
+        <div id="questionCount" class="quiz-top-label">CHALLENGE 1 OF 10</div>
+      </div>
+      <div id="progress" class="progress" aria-label="Quiz progress"></div>
+      <div class="question-card">
+        <div class="question-meta">
+          <div id="stageBadge" class="stage-badge">90% STAGE</div>
+          <div id="categoryBadge" class="category-badge">FOOTBALL</div>
+        </div>
+        <p id="questionNumber" class="question-number">CHALLENGE 1 OF 10</p>
+        <h2 id="questionText" class="question-text"></h2>
+        <div id="answerArea" class="answer-list"></div>
+        <div id="feedback" class="feedback hidden" role="status" aria-live="polite">
+          <div id="feedbackHeading" class="feedback-heading"></div>
+          <div id="feedbackCopy" class="feedback-copy"></div>
+          <a id="sourceLink" class="source-link hidden" href="#" target="_blank" rel="noopener noreferrer"></a>
+          <div class="feedback-action"><button id="continueButton" class="primary" type="button"></button></div>
+        </div>
+      </div>
+      <div id="quizError" class="error-copy" role="alert"></div>
+    </section>
+
+    <section id="resultScreen" class="screen hidden">
+      <div class="result-card">
+        <div class="eyebrow">YOUR RESULT</div>
+        <h1 id="resultTitle">QUIZ OVER</h1>
+        <div id="resultNumber" class="result-number">90%</div>
+        <p id="resultCopy" class="result-copy"></p>
+        <button id="playAgainButton" class="primary" type="button">PLAY AGAIN</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 FOOTBALL QUIZ CLUB</footer>
+
+  <script>
+    "use strict";
+
+    const SUPABASE_URL = "https://gppedffejzlahmswuovi.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_lozj1BBW7CrNgNGasb6srg_3_N1tub";
+    const QUIZ_ENDPOINT = SUPABASE_URL + "/functions/v1/football-quiz";
+    const LEVELS = [90, 80, 70, 60, 50, 40, 30, 20, 10, 1];
+
+    let gameToken = null;
+    let currentQuestion = null;
+    let currentIndex = 0;
+    let lastFeedback = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    async function quizApi(payload) {
+      const response = await fetch(QUIZ_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_PUBLISHABLE_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(data.error || "The quiz service returned an error (" + response.status + ").");
+        error.status = response.status;
+        error.data = data;
+        throw error;
+      }
+      return data;
+    }
+
+    function showScreen(screenId) {
+      ["homeScreen", "quizScreen", "resultScreen"].forEach((id) => $(id).classList.toggle("hidden", id !== screenId));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function checkQuestionBank() {
+      const card = $("statusCard");
+      const play = $("playButton");
+      try {
+        const status = await quizApi({ action: "health" });
+        card.classList.toggle("ready", status.ready === true);
+        if (status.ready) {
+          $("statusTitle").textContent = "Question bank ready";
+          $("statusCopy").textContent = status.active_questions + " verified questions are live across all ten stages.";
+          play.disabled = false;
+          play.textContent = "PLAY THE QUIZ";
+        } else {
+          const loadedStages = LEVELS.length - (status.missing_levels || []).length;
+          $("statusTitle").textContent = "Question bank being prepared";
+          $("statusCopy").textContent = "The site is connected. " + loadedStages + " of 10 stages currently have verified questions. We will not show unverified sample questions.";
+          play.disabled = true;
+          play.textContent = "QUESTION BANK COMING SOON";
         }
+      } catch (error) {
+        $("statusTitle").textContent = "Quiz connection needs attention";
+        $("statusCopy").textContent = "The page is live, but the quiz service could not be reached. Please refresh shortly.";
+        $("homeError").textContent = error.message;
+        play.disabled = true;
+        play.textContent = "QUIZ TEMPORARILY UNAVAILABLE";
+        console.error("Quiz health check failed:", error);
+      }
+    }
 
-        item.textContent = level;
+    async function startGame() {
+      const button = $("playButton");
+      if (button) {
+        button.disabled = true;
+        button.textContent = "STARTING GAME…";
+      }
+      $("homeError").textContent = "";
+      try {
+        const data = await quizApi({ action: "start" });
+        gameToken = data.token;
+        currentIndex = 0;
+        currentQuestion = data.question;
+        lastFeedback = null;
+        renderQuestion();
+        showScreen("quizScreen");
+      } catch (error) {
+        $("homeError").textContent = error.message;
+        if (error.status === 409) {
+          $("statusTitle").textContent = "Question bank being prepared";
+          $("statusCopy").textContent = "We need at least one verified question at every stage before games can begin.";
+        }
+        console.error("Could not start quiz:", error);
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = "PLAY THE QUIZ";
+        }
+        checkQuestionBank();
+      }
+    }
 
+    function renderProgress() {
+      const progress = $("progress");
+      progress.replaceChildren();
+      LEVELS.forEach((level, index) => {
+        const item = document.createElement("span");
+        item.className = "progress-step" + (index < currentIndex ? " done" : index === currentIndex ? " current" : "");
+        item.setAttribute("aria-label", level + " stage" + (index < currentIndex ? " completed" : index === currentIndex ? " current" : ""));
         progress.appendChild(item);
-
-    });
-
-
-    const answers = document.getElementById("answers");
-
-    answers.innerHTML = "";
-
-
-    q.answers.forEach((answer, index) => {
-
-        const button = document.createElement("button");
-
-        button.className = "answer";
-
-        button.textContent = answer;
-
-        button.onclick = function() {
-            checkAnswer(index, button);
-        };
-
-        answers.appendChild(button);
-
-    });
-
-}
-
-
-function checkAnswer(selected, button) {
-
-    if (gameOver) return;
-
-    const q = questions[currentQuestion];
-
-    const allButtons =
-        document.querySelectorAll(".answer");
-
-    allButtons.forEach(btn => {
-        btn.disabled = true;
-    });
-
-
-    if (selected === q.correct) {
-
-        button.classList.add("correct");
-
-        setTimeout(function() {
-
-            currentQuestion++;
-
-            if (currentQuestion >= questions.length) {
-
-                document.getElementById("quizScreen")
-                    .classList.add("hidden");
-
-                document.getElementById("finalScreen")
-                    .classList.remove("hidden");
-
-            } else {
-
-                showQuestion();
-
-            }
-
-        }, 700);
-
-    } else {
-
-        button.classList.add("wrong");
-
-        allButtons[q.correct].classList.add("correct");
-
-        gameOver = true;
-
-        setTimeout(function() {
-            showResult(false);
-        }, 900);
-
+      });
     }
 
-}
+    function renderQuestion() {
+      if (!currentQuestion) return;
+      renderProgress();
+      $("questionCount").textContent = "CHALLENGE " + (currentIndex + 1) + " OF 10";
+      $("stageBadge").textContent = currentQuestion.difficulty + "% STAGE";
+      $("categoryBadge").textContent = (currentQuestion.category || "FOOTBALL").toUpperCase();
+      $("questionNumber").textContent = "CHALLENGE " + (currentIndex + 1) + " OF 10";
+      $("questionText").textContent = currentQuestion.question;
+      $("feedback").classList.add("hidden");
+      $("sourceLink").classList.add("hidden");
+      $("quizError").textContent = "";
 
+      const answerArea = $("answerArea");
+      answerArea.replaceChildren();
 
-function checkFinalAnswer() {
-
-    const input =
-        document.getElementById("finalAnswer");
-
-    const answer =
-        input.value.trim().toLowerCase();
-
-    /*
-       For this prototype, the accepted answer is:
-       Cristiano Ronaldo is excluded, and the intended
-       answer is Gareth Bale.
-    */
-
-    if (
-        answer.includes("gareth bale") ||
-        answer === "bale"
-    ) {
-
-        showResult(true);
-
-    } else {
-
-        document.getElementById("finalScreen")
-            .classList.add("hidden");
-
-        document.getElementById("resultScreen")
-            .classList.remove("hidden");
-
-        document.getElementById("resultTitle")
-            .textContent = "SO CLOSE";
-
-        document.getElementById("resultPercentage")
-            .textContent = "10%";
-
-        document.getElementById("resultMessage")
-            .textContent =
-            "The 1% answer was Gareth Bale. You reached the final challenge.";
-
+      if (currentQuestion.question_type === "typed_answer") {
+        const form = document.createElement("form");
+        form.className = "typed-form";
+        const input = document.createElement("input");
+        input.id = "typedAnswer";
+        input.className = "typed-input";
+        input.type = "text";
+        input.maxLength = 500;
+        input.autocomplete = "off";
+        input.placeholder = "Type your answer…";
+        input.setAttribute("aria-label", "Your answer");
+        const submit = document.createElement("button");
+        submit.className = "primary";
+        submit.type = "submit";
+        submit.textContent = "SUBMIT ANSWER";
+        form.append(input, submit);
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          submitAnswer(input.value, form);
+        });
+        answerArea.appendChild(form);
+        input.focus();
+      } else {
+        const options = Array.isArray(currentQuestion.options) ? currentQuestion.options : [];
+        options.forEach((option) => {
+          const answer = typeof option === "string" ? option : String(option?.label ?? option?.text ?? "");
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "answer-option";
+          button.textContent = answer;
+          button.addEventListener("click", () => submitAnswer(answer, answerArea));
+          answerArea.appendChild(button);
+        });
+      }
     }
 
-}
-
-
-function showResult(won) {
-
-    document.getElementById("quizScreen")
-        .classList.add("hidden");
-
-    document.getElementById("finalScreen")
-        .classList.add("hidden");
-
-    document.getElementById("resultScreen")
-        .classList.remove("hidden");
-
-
-    if (won) {
-
-        document.getElementById("resultTitle")
-            .textContent = "YOU REACHED 1%!";
-
-        document.getElementById("resultPercentage")
-            .textContent = "1%";
-
-        document.getElementById("resultMessage")
-            .textContent =
-            "Incredible. You solved the final challenge.";
-
-    } else {
-
-        document.getElementById("resultTitle")
-            .textContent = "QUIZ OVER";
-
-        document.getElementById("resultPercentage")
-            .textContent =
-            questions[currentQuestion].level;
-
-        document.getElementById("resultMessage")
-            .textContent =
-            "You reached the " +
-            questions[currentQuestion].level +
-            " challenge. Can you go further next time?";
-
+    function addSourceLink(sourceName, sourceUrl) {
+      const link = $("sourceLink");
+      link.classList.add("hidden");
+      link.removeAttribute("href");
+      if (!sourceUrl) return;
+      try {
+        const url = new URL(sourceUrl);
+        if (url.protocol !== "https:" && url.protocol !== "http:") return;
+        link.href = url.href;
+        link.textContent = "SOURCE: " + (sourceName || url.hostname) + " ↗";
+        link.classList.remove("hidden");
+      } catch {
+        // Ignore invalid source links rather than rendering untrusted URLs.
+      }
     }
 
-}
+    async function submitAnswer(answer, container) {
+      const cleaned = String(answer || "").trim();
+      if (!cleaned) {
+        $("quizError").textContent = "Please enter an answer first.";
+        return;
+      }
+      $("quizError").textContent = "";
+      container.querySelectorAll("button, input").forEach((element) => element.disabled = true);
 
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = "https://gppedffejzlahmswuovi.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_lozj1BBW7CrNgNGasb6srg_3_N1tub";
+      try {
+        const data = await quizApi({ action: "answer", token: gameToken, answer: cleaned });
+        lastFeedback = data;
+        $("feedback").classList.remove("hidden", "good", "bad");
+        $("feedback").classList.add(data.correct ? "good" : "bad");
+        $("feedbackHeading").textContent = data.correct ? "CORRECT" : "NOT QUITE";
+        $("feedbackCopy").textContent = data.correct
+          ? (data.explanation || "That's right. Keep going.")
+          : ("The answer was " + (data.correct_answer || "not accepted") + ". " + (data.explanation || "Better luck next time."));
+        addSourceLink(data.source_name, data.source_url);
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+        const next = $("continueButton");
+        next.onclick = null;
+        if (!data.correct) {
+          next.textContent = "SEE YOUR RESULT";
+          next.onclick = () => showResult(false, data);
+        } else if (data.finished && data.result === "win") {
+          next.textContent = "VIEW 1% RESULT";
+          next.onclick = () => showResult(true, data);
+        } else {
+          next.textContent = "NEXT CHALLENGE";
+          next.onclick = () => {
+            currentIndex += 1;
+            currentQuestion = data.next_question;
+            renderQuestion();
+          };
+        }
+      } catch (error) {
+        $("quizError").textContent = error.message;
+        container.querySelectorAll("button, input").forEach((element) => element.disabled = false);
+        console.error("Answer submission failed:", error);
+      }
+    }
 
-  console.log("Football Quiz Club connected to Supabase");
-</script>
+    function showResult(won, data) {
+      const number = $("resultNumber");
+      if (won) {
+        $("resultTitle").textContent = "YOU REACHED 1%!";
+        number.textContent = "1%";
+        $("resultCopy").textContent = "Outstanding. You solved all nine multiple-choice stages and the final typed-answer challenge.";
+      } else {
+        const failedAt = data?.difficulty || LEVELS[currentIndex];
+        const reached = failedAt === 1 ? 10 : failedAt;
+        $("resultTitle").textContent = "QUIZ OVER";
+        number.textContent = reached + "%";
+        $("resultCopy").textContent = failedAt === 1
+          ? "You made it through the nine multiple-choice stages and reached the 1% final. " + (data?.explanation || "")
+          : "You reached the " + failedAt + "% challenge. " + (data?.explanation || "Can you go further next time?");
+      }
+      gameToken = null;
+      showScreen("resultScreen");
+    }
+
+    $("playButton").addEventListener("click", startGame);
+    $("playAgainButton").addEventListener("click", () => {
+      showScreen("homeScreen");
+      checkQuestionBank();
+    });
+
+    checkQuestionBank();
+  </script>
 </body>
 </html>
