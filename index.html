@@ -194,16 +194,22 @@ async function checkHealth(){
     else renderNav();
   }catch(e){$("homeStatus").textContent="The quiz connection needs attention. Refresh to retry."; $("playButton").disabled=true;}
 }
-function persistGame(){
-  if(!gameToken||!currentQuestion)return;
-  try{sessionStorage.setItem(activeKey,JSON.stringify({token:gameToken,question:currentQuestion,index:currentIndex,startedAt:gameStartedAt,lifelineUsed:lifelineUsed,savedAt:Date.now()}));}catch{}
+function persistGameSnapshot(question,index,extra={}){
+  if(!gameToken||!question)return;
+  try{sessionStorage.setItem(activeKey,JSON.stringify({token:gameToken,question,index,startedAt:gameStartedAt,lifelineUsed:lifelineUsed,savedAt:Date.now(),...extra}));}catch{}
 }
+function persistGame(){persistGameSnapshot(currentQuestion,currentIndex);}
 function clearPersistedGame(){sessionStorage.removeItem(activeKey);}
 async function resumeGame(){
   try{
     const saved=JSON.parse(sessionStorage.getItem(activeKey)||"null");
-    if(saved && saved.token && saved.question && Date.now()-saved.savedAt<30*60*1000){
+    if(saved && saved.token && Date.now()-saved.savedAt<30*60*1000){
       gameToken=saved.token;currentQuestion=saved.question;currentIndex=saved.index;gameStartedAt=saved.startedAt;lifelineUsed=!!saved.lifelineUsed;
+      if(saved.completedResult){
+        showResult(saved.completedResult.result==="win",saved.completedResult);
+        return true;
+      }
+      if(!currentQuestion) throw new Error("The saved question could not be restored.");
       const clock=await beginQuestionClock();
       showView("quizView");renderQuestion();runQuestionClock(clock);notify("Your game was restored.");
       return true;
@@ -234,7 +240,7 @@ function runQuestionClock(clock){
   questionTimeLimit=Number(clock.time_limit_seconds)||30;
   questionDeadline=Date.parse(clock.question_started_at)+questionTimeLimit*1000;
   renderClock();
-  clockInterval=setInterval(renderClock,200);
+  if(questionDeadline>Date.now()) clockInterval=setInterval(renderClock,200);
 }
 function revealDraw(){
   clearDrawTimer();
@@ -331,6 +337,8 @@ async function submitAnswer(answer,container){
   $("quizError").textContent="";container.querySelectorAll("button,input").forEach(x=>x.disabled=true);$("lifelineArea").classList.add("hidden");
   try{
     const data=await quizApi({action:"answer",token:gameToken,answer:cleaned});lastResult=data;
+    if(data.finished) persistGameSnapshot(currentQuestion,currentIndex,{completedResult:data});
+    else if(data.correct&&data.next_question) persistGameSnapshot(data.next_question,currentIndex+1);
     $("feedback").classList.remove("hidden","good","bad");$("feedback").classList.add(data.correct?"good":"bad");
     $("fbHead").textContent=data.time_up?"TIME IS UP — FULL-TIME":(data.correct?"CORRECT — YOU'RE THROUGH":"NOT THIS TIME");
     $("fbCopy").textContent=data.time_up?("The "+data.time_limit_seconds+"-second clock has reached zero. The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||"")):(data.correct?(data.explanation||"That's right. The next ball is waiting."):"The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||""));
