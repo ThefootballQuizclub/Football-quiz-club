@@ -439,6 +439,7 @@
       const button = $("lifelineButton");
       button.disabled = true;
       button.textContent = "APPLYING 50/50…";
+      $("answerArea").querySelectorAll("button").forEach((option) => option.disabled = true);
       $("quizError").textContent = "";
       try {
         const data = await quizApi({ action: "lifeline", token: gameToken });
@@ -451,6 +452,7 @@
       } catch (error) {
         button.disabled = false;
         button.textContent = "USE 50/50 LIFELINE";
+        $("answerArea").querySelectorAll("button").forEach((option) => option.disabled = false);
         $("quizError").textContent = error.message;
         console.error("50/50 lifeline failed:", error);
       }
@@ -464,6 +466,7 @@
       }
       $("quizError").textContent = "";
       container.querySelectorAll("button, input").forEach((element) => element.disabled = true);
+      $("lifelineArea").classList.add("hidden");
 
       try {
         const data = await quizApi({ action: "answer", token: gameToken, answer: cleaned });
@@ -495,6 +498,8 @@
       } catch (error) {
         $("quizError").textContent = error.message;
         container.querySelectorAll("button, input").forEach((element) => element.disabled = false);
+        const canRetryLifeline = currentIndex >= 4 && currentIndex < 9 && currentQuestion?.question_type === "multiple_choice" && !lifelineUsed;
+        $("lifelineArea").classList.toggle("hidden", !canRetryLifeline);
         console.error("Answer submission failed:", error);
       }
     }
