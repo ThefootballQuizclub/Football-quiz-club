@@ -503,16 +503,163 @@ async function loadLeaderboard(period="all"){
   }catch(e){$("boardContent").className="empty";$("boardContent").textContent="The leaderboard could not be loaded just now. Please try again.";}
 }
 function openBoard(period="all"){showView("boardView");loadLeaderboard(period);}
+
+function updateStreakDisplay(stats){
+  $("quizStreakValue").textContent=String(stats?.quiz_current_streak??0);
+  $("puzzleStreakValue").textContent=String(stats?.puzzle_current_streak??0);
+  $("quizBestValue").textContent=String(stats?.quiz_longest_streak??0);
+  $("puzzleBestValue").textContent=String(stats?.puzzle_longest_streak??0);
+  $("streakNote").textContent=currentUser()?"Daily streaks update when you complete the Daily Challenge or finish the player puzzle.":"Sign in to start saving your daily streaks.";
+}
+async function loadStats(){
+  if(!currentUser()){updateStreakDisplay(null);return;}
+  try{
+    const d=await quizApi({action:"stats"});
+    updateStreakDisplay(d.stats||{});
+  }catch(e){$("streakNote").textContent="Your streak stats could not be loaded right now.";}
+}
+
+function renderPuzzleGrid(guesses=[]){
+  const grid=$("puzzleGrid");grid.replaceChildren();
+  for(let r=0;r<6;r++){
+    const row=document.createElement("div");row.className="puzzle-row";
+    const entry=guesses[r];
+    for(let c=0;c<5;c++){
+      const cell=document.createElement("div");cell.className="puzzle-cell";
+      if(entry){
+        cell.textContent=entry.guess[c]||"";
+        cell.classList.add(entry.feedback[c]||"absent");
+      }
+      row.append(cell);
+    }
+    grid.append(row);
+  }
+}
+async function loadPuzzle(){
+  if(!currentUser()){openAuth("signin");return;}
+  showView("puzzleView");
+  $("puzzleMessage").textContent="Loading today's player…";
+  $("puzzleGuess").value="";
+  try{
+    puzzleState=await quizApi({action:"puzzle_state"});
+    $("puzzleClue").textContent=puzzleState.clue;
+    $("puzzleDate").textContent=puzzleState.puzzle_date;
+    $("puzzleAttempts").textContent=puzzleState.attempts_left+" GUESSES LEFT";
+    renderPuzzleGrid(puzzleState.guesses||[]);
+    $("puzzleGuess").disabled=!!puzzleState.finished;
+    $("puzzleSubmit").disabled=!!puzzleState.finished;
+    if(puzzleState.solved) $("puzzleMessage").textContent="CORRECT — "+puzzleState.answer+"! Your daily player streak has been saved.";
+    else if(puzzleState.finished) $("puzzleMessage").textContent="FULL-TIME. Today's player was "+puzzleState.answer+". Come back tomorrow for a new name.";
+    else $("puzzleMessage").textContent="You have "+puzzleState.attempts_left+" guesses left. Enter any five-letter guess.";
+    $("puzzleGuess").focus();
+  }catch(e){
+    $("puzzleMessage").textContent=e.message||"The daily player puzzle couldn't be loaded.";
+  }
+}
+async function submitPuzzleGuess(ev){
+  ev.preventDefault();
+  if(!currentUser()){openAuth("signin");return;}
+  const guess=$("puzzleGuess").value.trim().toUpperCase();
+  if(!/^[A-Z]{5}$/.test(guess)){ $("puzzleMessage").textContent="Enter exactly five letters.";return; }
+  $("puzzleSubmit").disabled=true;
+  try{
+    puzzleState=await quizApi({action:"puzzle_guess",guess});
+    renderPuzzleGrid(puzzleState.guesses||[]);
+    $("puzzleAttempts").textContent=puzzleState.attempts_left+" GUESSES LEFT";
+    $("puzzleGuess").value="";
+    $("puzzleGuess").disabled=!!puzzleState.finished;
+    if(puzzleState.solved) $("puzzleMessage").textContent="YOU GOT IT — "+puzzleState.answer+"! Your player-puzzle streak is saved.";
+    else if(puzzleState.finished) $("puzzleMessage").textContent="OUT OF GUESSES. Today's player was "+puzzleState.answer+". Try again tomorrow.";
+    else $("puzzleMessage").textContent="Not quite. "+puzzleState.attempts_left+" guesses left — use the colour clues.";
+    if(puzzleState.finished) loadStats();
+  }catch(e){$("puzzleMessage").textContent=e.message||"That guess could not be saved.";}
+  finally{$("puzzleSubmit").disabled=!!puzzleState?.finished;}
+}
+async function openArchive(){
+  if(!currentUser()){openAuth("signin");return;}
+  showView("archiveView");
+  $("archiveList").replaceChildren();
+  const loading=document.createElement("div");loading.className="empty";loading.textContent="Loading previous matchdays…";$("archiveList").append(loading);
+  try{
+    const d=await quizApi({action:"archive"});
+    archiveDates=Array.isArray(d.dates)?d.dates:[];
+    $("archiveList").replaceChildren();
+    if(!archiveDates.length){
+      const empty=document.createElement("div");empty.className="empty";empty.textContent="The archive will start filling up after the next 8am Daily Challenge release. Come back tomorrow to replay today's game."; $("archiveList").append(empty);return;
+    }
+    archiveDates.forEach(entry=>{
+      const day=entry.challenge_date;
+      const b=document.createElement("button");b.type="button";b.className="archive-day";
+      const strong=document.createElement("strong");
+      const labelDate=new Date(day+"T12:00:00Z");
+      strong.textContent=labelDate.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"});
+      const small=document.createElement("span");small.textContent="10 QUESTIONS • PLAY ARCHIVE";
+      b.append(strong,small);b.addEventListener("click",()=>startGame(day));$("archiveList").append(b);
+    });
+  }catch(e){
+    $("archiveList").replaceChildren();
+    const empty=document.createElement("div");empty.className="empty";empty.textContent=e.message||"The archive could not be loaded."; $("archiveList").append(empty);
+  }
+}
+
+function restoreMailSubscription(){
+  try{
+    const saved=JSON.parse(localStorage.getItem("fqc_mail_subscription_v1")||"null");
+    if(saved?.email&&saved?.token){
+      $("mailEmail").value=saved.email;
+      $("mailUnsubscribe").classList.remove("hidden");
+    }
+  }catch{}
+}
+async function submitMailSignup(ev){
+  ev.preventDefault();
+  const email=$("mailEmail").value.trim().toLowerCase();
+  if(!$("mailConsent").checked){$("mailStatus").textContent="Please tick the box to opt in.";return;}
+  $("mailSubmit").disabled=true;$("mailStatus").textContent="Saving your subscription…";
+  try{
+    const d=await quizApi({action:"subscribe",email,consent:true});
+    localStorage.setItem("fqc_mail_subscription_v1",JSON.stringify({email,token:d.manage_token}));
+    $("mailUnsubscribe").classList.remove("hidden");
+    $("mailStatus").textContent="You're on the Football Quiz Club list. The subscriber record is saved; automatic email delivery still needs an email sender to be connected.";
+    notify("Your mailing-list signup has been saved.");
+  }catch(e){$("mailStatus").textContent=e.message||"We couldn't save your email address. Please try again.";}
+  finally{$("mailSubmit").disabled=false;}
+}
+async function unsubscribeMail(){
+  try{
+    const saved=JSON.parse(localStorage.getItem("fqc_mail_subscription_v1")||"null");
+    if(!saved?.email||!saved?.token){$("mailStatus").textContent="This browser has no saved subscription to remove.";return;}
+    $("mailUnsubscribe").disabled=true;
+    await quizApi({action:"unsubscribe",email:saved.email,manage_token:saved.token});
+    localStorage.removeItem("fqc_mail_subscription_v1");
+    $("mailUnsubscribe").classList.add("hidden");$("mailStatus").textContent="You have been unsubscribed.";
+    $("mailEmail").value="";$("mailConsent").checked=false;
+  }catch(e){$("mailStatus").textContent=e.message||"We couldn't unsubscribe this saved address.";}
+  finally{$("mailUnsubscribe").disabled=false;}
+}
+
 async function init(){
   $("playButton").addEventListener("click",startGame);
-  $("howButton").addEventListener("click",()=>notify("Draw a ball, answer the stadium-screen question, and clear all ten stages to reach 1%."));
+  $("dailyPlayButton").addEventListener("click",()=>startGame());
+  $("todayNav").addEventListener("click",()=>showView("homeView"));
+  $("puzzleOpenButton").addEventListener("click",loadPuzzle);
+  $("archiveOpenButton").addEventListener("click",openArchive);
+  $("puzzleBack").addEventListener("click",()=>showView("homeView"));
+  $("archiveBack").addEventListener("click",()=>showView("homeView"));
+  $("puzzleForm").addEventListener("submit",submitPuzzleGuess);
+  $("mailForm").addEventListener("submit",submitMailSignup);
+  $("mailUnsubscribe").addEventListener("click",unsubscribeMail);
+  restoreMailSubscription();
+  const todayLabel=new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"numeric",month:"long"}).format(new Date());
+  $("dailyDateLabel").textContent=todayLabel.toUpperCase()+" • LIVE FROM 8AM UK";
+  $("howButton").addEventListener("click",()=>notify("The Daily Challenge is the same for everyone. Signed-in players keep going after misses; guests play classic knock-out rules. The 50/50 unlocks at 70%."));
   $("leaderNav").addEventListener("click",()=>openBoard("all"));$("openBoard").addEventListener("click",()=>openBoard("all"));$("resultBoard").addEventListener("click",()=>openBoard("all"));
   $("accountNav").addEventListener("click",()=>openAuth(currentUser()?"signup":"signin"));
   $("closeAuth").addEventListener("click",closeAuth);$("closeAccount").addEventListener("click",closeAuth);
   $("authBackdrop").addEventListener("click",e=>{if(e.target===$("authBackdrop"))closeAuth();});
   $("signupTab").addEventListener("click",()=>{authMode="signup";$("authMessage").textContent="";renderAuth();});
   $("signinTab").addEventListener("click",()=>{authMode="signin";$("authMessage").textContent="";renderAuth();});
-  $("signoutButton").addEventListener("click",async()=>{const {error}=await supabase.auth.signOut();if(error){$("authMessage").textContent=error.message;return;}authSession=null;profile=null;closeAuth();renderNav();notify("You have signed out.");});
+  $("signoutButton").addEventListener("click",async()=>{const {error}=await supabase.auth.signOut();if(error){$("authMessage").textContent=error.message;return;}authSession=null;profile=null;closeAuth();renderNav();loadStats();notify("You have signed out.");});
   $("authForm").addEventListener("submit",async ev=>{
     ev.preventDefault();const btn=$("authSubmit"),message=$("authMessage");btn.disabled=true;message.textContent="";
     const email=$("email").value.trim(),password=$("password").value;
@@ -538,9 +685,9 @@ async function init(){
   $("resultHome").addEventListener("click",()=>showView("homeView"));
   $("allTab").addEventListener("click",()=>loadLeaderboard("all"));$("weekTab").addEventListener("click",()=>loadLeaderboard("week"));$("boardBack").addEventListener("click",()=>showView("homeView"));
   $("resultJoin").addEventListener("click",()=>openAuth("signup"));
-  supabase.auth.onAuthStateChange((_event,session)=>{authSession=session;renderNav();setTimeout(async()=>{await refreshProfile();renderNav();},0);});
+  supabase.auth.onAuthStateChange((_event,session)=>{authSession=session;renderNav();setTimeout(async()=>{await refreshProfile();renderNav();loadStats();},0);});
   const {data}=await supabase.auth.getSession();authSession=data.session;await refreshProfile();renderNav();
-  await checkHealth();
+  await checkHealth();await loadStats();
   if(!currentUser()&&isGuestUsed()){$("homeStatus").textContent="Your one free guest game has been used. Join the club or sign in for your next game.";}
   if(!await resumeGame())showView("homeView");
   renderNav();
