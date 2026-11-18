@@ -202,6 +202,12 @@ let authSession = null, profile = null, currentQuestion = null, gameToken = null
 let gameMode = "classic", challengeDate = null, totalMistakes = 0, puzzleState = null, archiveDates = [];
 const guestKey = "fqc_guest_device_v1", guestUsedKey = "fqc_guest_game_used_v1", activeKey = "fqc_active_game_v1";
 
+function ukDailyDate(){
+  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/London",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+  const part=t=>parts.find(x=>x.type===t)?.value||"00";
+  const day=new Date(Date.UTC(Number(part("year")),Number(part("month"))-1,Number(part("day"))-(Number(part("hour"))<8?1:0)));
+  return day.toISOString().slice(0,10);
+}
 function guestId(){
   let id = localStorage.getItem(guestKey);
   if(!id){ id = crypto.randomUUID(); localStorage.setItem(guestKey,id); }
@@ -430,7 +436,7 @@ async function submitAnswer(answer,container){
     $("fbCopy").textContent=data.time_up
       ?("The "+data.time_limit_seconds+"-second clock has reached zero. The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||"")+(data.daily_mode?" Mistakes so far: "+totalMistakes+".":""))
       :(data.correct?(data.explanation||"That's right. The next ball is waiting.")
-        :("The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||"")+(data.daily_mode?" Your Daily Challenge continues. Mistakes so far: "+totalMistakes+".":"")));
+        :("The answer was "+(data.correct_answer||"not accepted")+". "+(data.explanation||"")+(data.daily_mode?(gameMode==="archive"?" Your archive run continues.":" Your Daily Challenge continues.")+" Mistakes so far: "+totalMistakes+".":"")));
     $("dailyMistakes").textContent=totalMistakes+" MISTAKE"+(totalMistakes===1?"":"S")+" SO FAR";
     addSource(data.source_name,data.source_url);
     const next=$("continueButton");next.onclick=null;
@@ -453,10 +459,10 @@ function showResult(won,data){
   const mistakes=Number(data?.mistakes_total??totalMistakes);
   const correctCount=Number(data?.correct_count_so_far??(10-mistakes));
   const failed=data?.difficulty||LEVELS[currentIndex];
-  $("resultTitle").textContent=isDaily?"DAILY CHALLENGE COMPLETE":(won?"YOU REACHED THE 1% FINAL":"FULL-TIME");
+  $("resultTitle").textContent=isDaily?(gameMode==="archive"?"ARCHIVE RUN COMPLETE":"DAILY CHALLENGE COMPLETE"):(won?"YOU REACHED THE 1% FINAL":"FULL-TIME");
   $("resultNumber").textContent=isDaily?correctCount+"/10":(won?"1%":String(failed)+"%");
   $("resultCopy").textContent=isDaily
-    ?("You reached the 1% typed-answer final and got "+correctCount+" out of 10 questions right, with "+mistakes+" mistake"+(mistakes===1?"":"s")+". "+(won?"You also solved the final question — outstanding.":"The final question was attempted. Come back at 8am for a fresh challenge."))
+    ?("You reached the 1% typed-answer final and got "+correctCount+" out of 10 questions right, with "+mistakes+" mistake"+(mistakes===1?"":"s")+". "+(gameMode==="archive"?"This replay does not affect your live streak.":(won?"You also solved the final question — outstanding.":"The final question was attempted. Come back at 8am for a fresh challenge.")))
     :(won?"Incredible. You cleared every stage and solved the final typed-answer challenge.":("Your run ended at the "+failed+"% challenge. "+(data?.explanation||"Another matchday is waiting.")));
   $("statStages").textContent=isDaily?correctCount+" / 10 correct":(won?"10":currentIndex)+" / 10";
   $("statReached").textContent=isDaily?"1% FINAL ATTEMPTED":(won?"1%":(currentIndex===0?"Starting round":LEVELS[currentIndex-1]+"%"));
@@ -650,7 +656,7 @@ async function init(){
   $("mailForm").addEventListener("submit",submitMailSignup);
   $("mailUnsubscribe").addEventListener("click",unsubscribeMail);
   restoreMailSubscription();
-  const todayLabel=new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"numeric",month:"long"}).format(new Date());
+  const todayLabel=new Date(ukDailyDate()+"T12:00:00Z").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"});
   $("dailyDateLabel").textContent=todayLabel.toUpperCase()+" • LIVE FROM 8AM UK";
   $("howButton").addEventListener("click",()=>notify("The Daily Challenge is the same for everyone. Signed-in players keep going after misses; guests play classic knock-out rules. The 50/50 unlocks at 70%."));
   $("leaderNav").addEventListener("click",()=>openBoard("all"));$("openBoard").addEventListener("click",()=>openBoard("all"));$("resultBoard").addEventListener("click",()=>openBoard("all"));
