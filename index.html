@@ -149,7 +149,6 @@ function renderAuth(){
   const signed=!!currentUser();
   $("nameFields").classList.toggle("hidden",authMode!=="signup");
   $("authForm").classList.toggle("hidden",signed);
-  $("authTabsWrap");
   $("signupTab").classList.toggle("active",authMode==="signup");
   $("signinTab").classList.toggle("active",authMode==="signin");
   $("signupTab").disabled=signed; $("signinTab").disabled=signed;
