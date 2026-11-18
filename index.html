@@ -124,6 +124,13 @@
       transition: background .12s ease, border-color .12s ease, transform .12s ease;
     }
     .answer-option:not(:disabled):hover { background: #194a32; border-color: var(--green); transform: translateY(-1px); }
+    .lifeline-area { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .lifeline-button {
+      min-height: 42px; padding: 0 15px; border: 1px solid #a78b44; border-radius: 10px;
+      color: #f5dc91; background: rgba(242,210,122,.08); font-size: 12px; font-weight: 900; letter-spacing: .06em;
+    }
+    .lifeline-button:not(:disabled):hover { background: rgba(242,210,122,.16); border-color: #f2d27a; }
+    .lifeline-message { color: #d5c28b; font-size: 12px; line-height: 1.5; }
     .typed-form { display: flex; gap: 10px; flex-wrap: wrap; }
     .typed-input {
       flex: 1 1 240px; min-width: 0; min-height: 56px; padding: 0 16px;
@@ -214,6 +221,10 @@
         <p id="questionNumber" class="question-number">CHALLENGE 1 OF 10</p>
         <h2 id="questionText" class="question-text"></h2>
         <div id="answerArea" class="answer-list"></div>
+        <div id="lifelineArea" class="lifeline-area hidden">
+          <button id="lifelineButton" class="lifeline-button" type="button">USE 50/50 LIFELINE</button>
+          <span id="lifelineMessage" class="lifeline-message hidden"></span>
+        </div>
         <div id="feedback" class="feedback hidden" role="status" aria-live="polite">
           <div id="feedbackHeading" class="feedback-heading"></div>
           <div id="feedbackCopy" class="feedback-copy"></div>
@@ -249,6 +260,7 @@
     let currentQuestion = null;
     let currentIndex = 0;
     let lastFeedback = null;
+    let lifelineUsed = false;
 
     const $ = (id) => document.getElementById(id);
 
@@ -318,6 +330,7 @@
         currentIndex = 0;
         currentQuestion = data.question;
         lastFeedback = null;
+        lifelineUsed = false;
         renderQuestion();
         showScreen("quizScreen");
       } catch (error) {
@@ -358,6 +371,13 @@
       $("feedback").classList.add("hidden");
       $("sourceLink").classList.add("hidden");
       $("quizError").textContent = "";
+      const canUseLifeline = currentIndex >= 4 && currentIndex < 9 && currentQuestion.question_type === "multiple_choice";
+      $("lifelineArea").classList.toggle("hidden", !canUseLifeline);
+      $("lifelineButton").classList.toggle("hidden", lifelineUsed);
+      $("lifelineButton").disabled = false;
+      $("lifelineButton").textContent = "USE 50/50 LIFELINE";
+      $("lifelineMessage").classList.toggle("hidden", !lifelineUsed);
+      $("lifelineMessage").textContent = lifelineUsed ? "50/50 used — two incorrect answers removed." : "";
 
       const answerArea = $("answerArea");
       answerArea.replaceChildren();
@@ -411,6 +431,28 @@
         link.classList.remove("hidden");
       } catch {
         // Ignore invalid source links rather than rendering untrusted URLs.
+      }
+    }
+
+    async function useLifeline() {
+      if (lifelineUsed || currentIndex < 4 || currentIndex >= 9 || currentQuestion?.question_type !== "multiple_choice") return;
+      const button = $("lifelineButton");
+      button.disabled = true;
+      button.textContent = "APPLYING 50/50…";
+      $("quizError").textContent = "";
+      try {
+        const data = await quizApi({ action: "lifeline", token: gameToken });
+        if (!Array.isArray(data.options) || data.options.length !== 2) {
+          throw new Error("The 50/50 lifeline response was invalid.");
+        }
+        currentQuestion.options = data.options;
+        lifelineUsed = true;
+        renderQuestion();
+      } catch (error) {
+        button.disabled = false;
+        button.textContent = "USE 50/50 LIFELINE";
+        $("quizError").textContent = error.message;
+        console.error("50/50 lifeline failed:", error);
       }
     }
 
@@ -476,6 +518,7 @@
       showScreen("resultScreen");
     }
 
+    $("lifelineButton").addEventListener("click", useLifeline);
     $("playButton").addEventListener("click", startGame);
     $("playAgainButton").addEventListener("click", () => {
       showScreen("homeScreen");
