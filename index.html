@@ -309,7 +309,7 @@ function showResult(won,data){
   const failed=data?.difficulty||LEVELS[currentIndex];
   const reached=won?10:Math.max(0,currentIndex);
   $("resultTitle").textContent=won?"YOU REACHED THE 1% FINAL":"FULL-TIME";
-  $("resultNumber").textContent=won?"1%":(reached===0?"90%":(LEVELS[Math.max(0,reached-1)]+"%"));
+  $("resultNumber").textContent=won?"1%":String(failed)+"%";
   $("resultCopy").textContent=won?"Incredible. You cleared every stage and solved the final typed-answer challenge.":("Your run ended at the "+failed+"% challenge. "+(data?.explanation||"Another matchday is waiting."));
   $("statStages").textContent=(won?10:currentIndex)+" / 10";
   $("statReached").textContent=won?"1%":(currentIndex===0?"Starting round":LEVELS[currentIndex-1]+"%");
@@ -380,12 +380,12 @@ async function init(){
     finally{btn.disabled=false;}
   });
   $("lifelineButton").addEventListener("click",useLifeline);
-  $("drawBack").addEventListener("click",()=>{clearDrawTimer();showView("homeView");});
+  $("drawBack").addEventListener("click",()=>{if(confirm("Leave this game? Your free guest game will still count as used.")){clearDrawTimer();clearPersistedGame();gameToken=null;showView("homeView");}});
   $("quitQuiz").addEventListener("click",()=>{if(confirm("Leave this game? Your current run will end.")){clearPersistedGame();gameToken=null;showView("homeView");}});
   $("resultHome").addEventListener("click",()=>showView("homeView"));
   $("allTab").addEventListener("click",()=>loadLeaderboard("all"));$("weekTab").addEventListener("click",()=>loadLeaderboard("week"));$("boardBack").addEventListener("click",()=>showView("homeView"));
   $("resultJoin").addEventListener("click",()=>openAuth("signup"));
-  supabase.auth.onAuthStateChange(async(_event,session)=>{authSession=session;await refreshProfile();renderNav();});
+  supabase.auth.onAuthStateChange((_event,session)=>{authSession=session;renderNav();setTimeout(async()=>{await refreshProfile();renderNav();},0);});
   const {data}=await supabase.auth.getSession();authSession=data.session;await refreshProfile();renderNav();
   await checkHealth();
   if(!currentUser()&&isGuestUsed()){$("homeStatus").textContent="Your one free guest game has been used. Join the club or sign in for your next game.";}
