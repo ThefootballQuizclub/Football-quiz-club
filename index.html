@@ -25,12 +25,22 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
 @media(max-width:850px){.hero{grid-template-columns:1fr}.hero-copy{padding:16px 0 0}.stadium{min-height:360px}.draw-panel{grid-template-columns:1fr}.dome-side{min-height:285px}.result-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.shell{width:calc(100% - 22px)}.head{min-height:64px}.crest{width:35px;height:39px;flex-basis:35px}.brand-title{font-size:13px}.brand-sub{font-size:7px}.nav{gap:5px}.nav button{min-height:35px;padding:0 8px;font-size:8px}.nav .account-label{display:none}main{padding-top:22px}.hero h1{font-size:clamp(48px,14vw,72px)}.hero-copy>p{font-size:12px}.stadium{min-height:300px}.lower{grid-template-columns:1fr}.level-strip{gap:3px}.level{font-size:8px}.draw-panel{padding:18px 13px 27px}.dome-side{min-height:255px}.dome{width:285px;height:215px}.ball{width:44px;height:44px;font-size:10px}.b8,.b9,.b10{width:38px;height:38px}.picked{width:76px;height:76px;font-size:17px}.answers{grid-template-columns:1fr}.score-head{padding:13px}.score-body{padding:18px 13px}.answer{min-height:55px}.page-title{font-size:33px}.modal{padding:22px 18px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Daily challenge hub and the new game modes */
+.daily-hub{margin-top:29px}.hub-heading{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:13px}.hub-heading h2,.coming-next h2,.mail-tile h2{margin:5px 0 0;font-size:clamp(22px,3vw,31px);letter-spacing:-.065em}.hub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.hub-card{min-height:222px;padding:19px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(145deg,#122c1c,#09170f);display:flex;flex-direction:column;align-items:flex-start}.hub-card.featured{border-color:#b4f36a62;background:radial-gradient(ellipse at 100% 0,#b4f36a1a,transparent 55%),linear-gradient(145deg,#193a25,#09170f)}.hub-card h3{margin:10px 0 8px;font-size:18px;letter-spacing:-.045em}.hub-card p{margin:0;color:var(--muted);font-size:11px;line-height:1.7}.hub-kicker,.hub-meta{color:var(--green);font-size:8px;font-weight:1000;letter-spacing:.17em}.hub-meta{margin-top:auto;padding:15px 0 11px;color:#829686}.hub-card .btn,.hub-card .ghost{margin-top:3px}.streak-card{justify-content:flex-start}.streak-pairs{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 6px}.streak-pairs>div{padding:9px 8px;border-radius:6px;background:#ffffff08}.streak-pairs strong{display:block;color:var(--green);font-size:22px;letter-spacing:-.06em}.streak-pairs span{display:block;margin-top:2px;color:#8da091;font-size:7px;font-weight:950;letter-spacing:.12em}.hub-note{margin-top:auto!important;color:#8da091!important;font-size:9px!important}.mail-tile{display:grid;grid-template-columns:1fr .9fr;gap:22px;align-items:center;margin-top:15px;padding:24px;border:1px solid #dff2df22;border-radius:10px;background:linear-gradient(125deg,#142f20,#09160e)}.mail-tile p,.coming-next p{max-width:530px;margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.8}.mail-form{display:grid;gap:9px}.mail-label{display:block;margin-bottom:6px;color:#aec0b1;font-size:8px;font-weight:950;letter-spacing:.15em}.consent-row{display:flex;align-items:flex-start;gap:9px;color:#9eb09f;font-size:9px;line-height:1.5}.consent-row input{accent-color:#b4f36a;margin:1px 0 0;flex:0 0 auto}.mail-status{min-height:15px;color:var(--green);font-size:9px;line-height:1.5}.text-button{border:0;padding:0;background:transparent;color:var(--green);font-size:9px;font-weight:1000;letter-spacing:.12em;text-align:left}.coming-next{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-top:15px;padding:20px;border:1px solid var(--line);border-radius:10px;background:#ffffff05}.coming-next p{max-width:410px;margin:0}
+.daily-run-info{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:-9px 0 16px;padding:10px 12px;border:1px solid #b4f36a3b;border-radius:6px;background:#b4f36a0a;color:#b4f36a;font-size:8px;font-weight:1000;letter-spacing:.15em}.daily-run-info strong{font-size:10px}
+.puzzle-panel{display:grid;grid-template-columns:.8fr 1fr;gap:23px;padding:clamp(20px,4vw,36px);border:1px solid #dff2df2c;border-radius:13px;background:radial-gradient(ellipse at 0 0,#b4f36a12,transparent 50%),linear-gradient(145deg,#173723,#07140c);box-shadow:var(--shadow)}.puzzle-copy h2{margin:18px 0 12px;font-size:clamp(38px,6vw,65px);line-height:.9;letter-spacing:-.08em}.puzzle-copy p{color:var(--muted);font-size:13px;line-height:1.8}.puzzle-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px;color:var(--green);font-size:8px;font-weight:950;letter-spacing:.14em}.puzzle-board{padding:18px;border:1px solid var(--line);border-radius:10px;background:#06130c}.puzzle-grid{display:grid;gap:6px;max-width:300px;margin:0 auto 17px}.puzzle-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.puzzle-cell{aspect-ratio:1;display:grid;place-items:center;border:1px solid #dff2df36;border-radius:4px;background:#ffffff06;color:white;font-size:20px;font-weight:1000}.puzzle-cell.correct{background:#477c3f;border-color:#8ece72}.puzzle-cell.present{background:#ae812e;border-color:#e9c36a}.puzzle-cell.absent{background:#3c4a40;border-color:#526356}.puzzle-entry{display:flex;gap:8px}.puzzle-entry .input{text-transform:uppercase;letter-spacing:.17em;text-align:center;font-weight:950}.puzzle-message{min-height:36px;margin-top:12px;color:#b6c6b8;font-size:10px;line-height:1.6}.puzzle-legend{display:flex;flex-wrap:wrap;gap:11px;margin-top:9px}.puzzle-legend span{display:flex;gap:5px;align-items:center;color:#8ea091;font-size:7px;font-weight:950;letter-spacing:.1em}.legend-swatch{width:8px;height:8px;border-radius:2px}.legend-swatch.correct{background:#72b65c}.legend-swatch.present{background:#d4a745}.legend-swatch.absent{background:#546459}
+.archive-panel{padding:clamp(20px,4vw,34px);border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#132d1d,#08160e)}.archive-intro h2{margin:0;font-size:26px;letter-spacing:-.06em}.archive-intro p{max-width:620px;color:var(--muted);font-size:11px;line-height:1.7}.archive-list{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:19px}.archive-day{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-height:72px;padding:13px;border:1px solid var(--line);border-radius:7px;background:#ffffff07;color:var(--text);text-align:left}.archive-day:hover{border-color:#b4f36a70;background:#b4f36a0d}.archive-day strong{font-size:12px}.archive-day span{color:#8da091;font-size:8px;font-weight:900;letter-spacing:.1em}
+@media(max-width:1000px){.hub-grid{grid-template-columns:1fr 1fr}.hub-card{min-height:205px}}
+@media(max-width:760px){.mail-tile,.puzzle-panel{grid-template-columns:1fr}.coming-next{display:block}.coming-next p{margin-top:11px}.archive-list{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.hub-heading{align-items:flex-start;flex-direction:column}.hub-grid{grid-template-columns:1fr}.hub-card{min-height:0}.hub-card .hub-meta{padding-top:13px}.mail-tile{padding:18px}.puzzle-panel{padding:15px}.puzzle-board{padding:12px}.puzzle-cell{font-size:17px}.archive-list{grid-template-columns:1fr}.daily-run-info{font-size:7px}}
+
 </style>
 </head>
 <body>
 <header><div class="shell head">
   <div class="brand"><div class="crest">FQC</div><div><div class="brand-title">FOOTBALL <b>QUIZ CLUB</b></div><div class="brand-sub">MATCHDAY • FOOTBALL KNOWLEDGE</div></div></div>
-  <nav class="nav"><button id="leaderNav">LEADERBOARD</button><button id="accountNav" class="bright">SIGN IN</button></nav>
+  <nav class="nav"><button id="todayNav">TODAY</button><button id="leaderNav">LEAGUE TABLE</button><button id="accountNav" class="bright">SIGN IN</button></nav>
 </div></header>
 <main class="shell">
 <section id="homeView" class="view">
@@ -39,7 +49,7 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
       <div class="live"><i class="red-dot"></i> THE STADIUM IS OPEN</div>
       <div class="eyebrow" style="margin-top:23px">YOUR SEAT IS WAITING</div>
       <h1>ALL BALL.<br><span class="stroke">NO</span> <span>LUCK.</span></h1>
-      <p>Ten balls will be drawn. Ten football questions will stand between you and the one per cent final. Start as a guest, then join the club to save your scores and climb the table.</p>
+      <p>A fresh shared football challenge every morning at 8am UK time. Take on ten rounds, count your misses, and still face the 1% final when you play signed in. Or try the daily player puzzle.</p>
       <div class="actions"><button id="playButton" class="btn" disabled>CHECKING THE DRAW…</button><button id="howButton" class="btn secondary">HOW IT WORKS</button></div>
       <div id="homeStatus" class="status" role="status">Connecting to the question bank…</div>
       <div class="facts"><div><strong>10</strong><span>CHALLENGES</span></div><div><strong>1</strong><span>FINAL QUESTION</span></div><div><strong>100</strong><span>QUESTIONS PER STAGE</span></div></div>
@@ -50,10 +60,57 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
       <div class="stadium-bottom"><span>FOOTBALL QUIZ CLUB</span><b>LIGHTS ON • GAME ON</b></div>
     </div>
   </div>
+  <section class="daily-hub" aria-label="Daily games">
+    <div class="hub-heading"><div><span class="eyebrow">THE DAILY CLUB</span><h2>THREE WAYS TO PLAY</h2></div><span class="quiet">A NEW QUIZ EVERY DAY • 8AM UK</span></div>
+    <div class="hub-grid">
+      <article class="hub-card featured">
+        <div class="hub-kicker">TODAY'S MAIN EVENT</div><h3>THE DAILY CHALLENGE</h3>
+        <p>Ten questions. The same draw for everyone. Signed-in players keep going after mistakes and still get the 1% final.</p>
+        <div class="hub-meta" id="dailyDateLabel">TODAY'S FIXTURE</div>
+        <button id="dailyPlayButton" class="btn small">PLAY TODAY'S CHALLENGE</button>
+      </article>
+      <article class="hub-card">
+        <div class="hub-kicker">SIX GUESSES</div><h3>GUESS THE PLAYER</h3>
+        <p>One footballer every day. Work out their five-letter surname from the clue and colour hints.</p>
+        <div class="hub-meta">A NEW NAME EVERY DAY</div>
+        <button id="puzzleOpenButton" class="ghost">PLAY PLAYER OF THE DAY</button>
+      </article>
+      <article class="hub-card">
+        <div class="hub-kicker">PAST MATCHDAYS</div><h3>THE ARCHIVE</h3>
+        <p>Missed a day? Replay previous Daily Challenges and see how you would have done.</p>
+        <div class="hub-meta">SIGNED-IN PLAYERS</div>
+        <button id="archiveOpenButton" class="ghost">BROWSE THE ARCHIVE</button>
+      </article>
+      <article class="hub-card streak-card">
+        <div class="hub-kicker">YOUR FORM</div><h3>STREAKS & STATS</h3>
+        <div class="streak-pairs">
+          <div><strong id="quizStreakValue">—</strong><span>QUIZ DAYS</span></div>
+          <div><strong id="puzzleStreakValue">—</strong><span>PLAYER PUZZLE DAYS</span></div>
+          <div><strong id="quizBestValue">—</strong><span>BEST QUIZ RUN</span></div>
+          <div><strong id="puzzleBestValue">—</strong><span>BEST PUZZLE RUN</span></div>
+        </div>
+        <p id="streakNote" class="hub-note">Sign in to start saving your daily streaks.</p>
+      </article>
+    </div>
+  </section>
   <div class="lower">
-    <div class="tile"><div class="tile-head"><h3>THE ROAD TO 1%</h3><span class="quiet">10 STAGES</span></div><p>Each correct answer advances you to a tougher round. Get one wrong and your run is over.</p><div class="level-strip"><span class="level">90</span><span class="level">80</span><span class="level">70</span><span class="level">60</span><span class="level">50</span><span class="level">40</span><span class="level">30</span><span class="level">20</span><span class="level">10</span><span class="level">1%</span></div></div>
-    <div class="tile"><div class="tile-head"><h3>THE CLUBHOUSE</h3><span class="quiet">GLOBAL TABLE</span></div><p>Play one full game without an account. After that, create a free player account or sign in for another go. Your signed-in results are added to your best-score leaderboard.</p><div style="margin-top:14px"><button id="openBoard" class="ghost">VIEW THE LEADERBOARD →</button></div></div>
+    <div class="tile"><div class="tile-head"><h3>THE ROAD TO 1%</h3><span class="quiet">10 STAGES</span></div><p>Three friendlier opening rounds help you settle in. From the 70% round, you can use your one 50/50 lifeline.</p><div class="level-strip"><span class="level">90</span><span class="level">80</span><span class="level">70</span><span class="level">60</span><span class="level">50</span><span class="level">40</span><span class="level">30</span><span class="level">20</span><span class="level">10</span><span class="level">1%</span></div></div>
+    <div class="tile"><div class="tile-head"><h3>THE CLUBHOUSE</h3><span class="quiet">GLOBAL TABLE</span></div><p>Play one free classic game as a guest. Sign in for the shared Daily Challenge, saved results, streaks, the player puzzle and the archive.</p><div style="margin-top:14px"><button id="openBoard" class="ghost">VIEW THE LEAGUE TABLE →</button></div></div>
   </div>
+  <section class="mail-tile" aria-label="Daily challenge email alerts">
+    <div><div class="eyebrow">NEVER MISS KICK-OFF</div><h2>GET THE 8AM LINE-UP</h2><p>Join the mailing list and get an email when a new Daily Challenge is available. This is separate from your player account.</p></div>
+    <form id="mailForm" class="mail-form">
+      <label class="field"><span class="mail-label">EMAIL ADDRESS</span><input id="mailEmail" class="input" type="email" maxlength="254" required autocomplete="email" placeholder="you@example.com"></label>
+      <label class="consent-row"><input id="mailConsent" type="checkbox" required><span>Yes, email me when a new Football Quiz Club Daily Challenge is live. I can unsubscribe at any time.</span></label>
+      <button id="mailSubmit" class="btn small" type="submit">JOIN THE MAILING LIST</button>
+      <div id="mailStatus" class="mail-status" role="status"></div>
+      <button id="mailUnsubscribe" class="text-button hidden" type="button">UNSUBSCRIBE THIS EMAIL</button>
+    </form>
+  </section>
+  <section class="coming-next">
+    <div><span class="eyebrow">MORE GAMES IN THE PIPELINE</span><h2>THE CLUBHOUSE WILL KEEP GROWING.</h2></div>
+    <p>Next up: original football game-show rounds, including a rarity game where the most obscure valid answer earns the fewest points.</p>
+  </section>
 </section>
 
 <section id="drawView" class="view hidden">
@@ -70,6 +127,7 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
     <div class="score-head"><strong>FOOTBALL QUIZ CLUB • LIVE QUESTION</strong><span id="countLabel">CHALLENGE 1 / 10</span></div>
     <div class="score-body">
       <div class="qmeta"><span id="stageLabel" class="stage">90% STAGE</span><span id="categoryLabel" class="category">FOOTBALL</span></div>
+      <div id="dailyRunInfo" class="daily-run-info hidden"><span id="dailyRunMode">DAILY CHALLENGE</span><strong id="dailyMistakes">0 MISTAKES</strong></div>
       <div id="questionNumber" class="qnum">CHALLENGE 1 OF 10</div>
       <div id="questionClock" class="clock" role="timer" aria-label="Time remaining">
         <span id="timerLabel" class="clock-label">30 SECONDS</span>
@@ -88,8 +146,26 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
   <div class="topline"><div><div class="eyebrow">THE FINAL WHISTLE</div><h1 class="page-title">YOUR MATCHDAY</h1></div><button id="resultHome" class="back">CLUBHOUSE</button></div>
   <div class="result-grid">
     <div class="result-main"><div class="eyebrow">YOUR RESULT</div><h2 id="resultTitle">GAME OVER</h2><div id="resultNumber" class="result-number">90%</div><p id="resultCopy">You reached the challenge.</p><div class="result-buttons"><button id="againButton" class="btn">PLAY AGAIN</button><button id="resultBoard" class="btn secondary">LEADERBOARD</button></div><div id="resultGate" class="notice hidden">Your free guest game has been used. Join the club or sign in to unlock your next game and get your name on the leaderboard. <button id="resultJoin" class="text-button">JOIN THE CLUB →</button></div></div>
-    <div class="result-side"><div class="eyebrow">PLAYER STATS</div><div class="stat"><span>STAGES CLEARED</span><strong id="statStages">0 / 10</strong></div><div class="stat"><span>HIGHEST STAGE</span><strong id="statReached">—</strong></div><div class="stat"><span>PLAYER STATUS</span><strong id="statAccount">GUEST</strong></div><div class="stat"><span>LEADERBOARD</span><strong id="statRank">—</strong></div></div>
+    <div class="result-side"><div class="eyebrow">PLAYER STATS</div><div class="stat"><span>STAGES CLEARED / CORRECT</span><strong id="statStages">0 / 10</strong></div><div class="stat"><span>HIGHEST STAGE</span><strong id="statReached">—</strong></div><div class="stat"><span>MISTAKES</span><strong id="statMistakes">—</strong></div><div class="stat"><span>PLAYER STATUS</span><strong id="statAccount">GUEST</strong></div><div class="stat"><span>LEADERBOARD / DAILY SAVE</span><strong id="statRank">—</strong></div></div>
   </div>
+</section>
+
+<section id="puzzleView" class="view hidden">
+  <div class="topline"><div><div class="eyebrow">THE DAILY PLAYER PUZZLE</div><h1 class="page-title">GUESS THE PLAYER</h1></div><button id="puzzleBack" class="back">CLUBHOUSE</button></div>
+  <div class="puzzle-panel">
+    <div class="puzzle-copy"><span class="draw-badge">ONE PLAYER • SIX GUESSES</span><h2>WHO'S THE<br><span style="color:var(--green)">PLAYER?</span></h2><p id="puzzleClue">A football clue will appear here.</p><div class="puzzle-meta"><span id="puzzleDate">TODAY'S PLAYER</span><span id="puzzleAttempts">6 GUESSES LEFT</span></div></div>
+    <div class="puzzle-board">
+      <div id="puzzleGrid" class="puzzle-grid" aria-label="Player surname guesses"></div>
+      <form id="puzzleForm" class="puzzle-entry"><input id="puzzleGuess" class="input" maxlength="5" minlength="5" pattern="[A-Za-z]{5}" required autocomplete="off" autocapitalize="characters" placeholder="5-LETTER SURNAME" aria-label="Five letter surname"><button id="puzzleSubmit" class="btn small" type="submit">GUESS</button></form>
+      <div id="puzzleMessage" class="puzzle-message" role="status" aria-live="polite">Enter a five-letter surname. Green means right letter and place; amber means right letter, wrong place.</div>
+      <div class="puzzle-legend"><span><i class="legend-swatch correct"></i> RIGHT PLACE</span><span><i class="legend-swatch present"></i> WRONG PLACE</span><span><i class="legend-swatch absent"></i> NOT IN NAME</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="archiveView" class="view hidden">
+  <div class="topline"><div><div class="eyebrow">PAST DAILY CHALLENGES</div><h1 class="page-title">THE ARCHIVE</h1></div><button id="archiveBack" class="back">CLUBHOUSE</button></div>
+  <div class="archive-panel"><div class="archive-intro"><h2>OLD MATCHDAYS. NEW CHANCES.</h2><p>Choose a previous date to replay that day's ten questions. Archive games do not change your live daily streak.</p></div><div id="archiveList" class="archive-list"><div class="empty">Loading the archive…</div></div></div>
 </section>
 
 <section id="boardView" class="view hidden">
