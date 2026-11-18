@@ -3,202 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Football Quiz Club</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
+* { box-sizing: border-box; }
 
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #061a12;
-        color: white;
-        min-height: 100vh;
-    }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #061a12;
+    color: white;
+    min-height: 100vh;
+}
 
-    header {
-        padding: 22px;
-        text-align: center;
-        background: #0a281b;
-        border-bottom: 2px solid #19d477;
-    }
+header {
+    padding: 22px;
+    text-align: center;
+    background: #0a281b;
+    border-bottom: 2px solid #19d477;
+}
 
-    .logo {
-        font-size: 30px;
-        font-weight: bold;
-    }
+.logo {
+    font-size: 30px;
+    font-weight: bold;
+}
 
-    .logo span {
-        color: #19d477;
-    }
+.logo span { color: #19d477; }
 
-    .container {
-        max-width: 750px;
-        margin: auto;
-        padding: 45px 20px;
-    }
+.container {
+    max-width: 760px;
+    margin: auto;
+    padding: 35px 20px;
+}
 
-    .screen {
-        text-align: center;
-    }
+.screen { text-align: center; }
+.hidden { display: none; }
 
-    .hidden {
-        display: none;
-    }
+.badge {
+    display: inline-block;
+    background: #103d29;
+    color: #19d477;
+    padding: 9px 18px;
+    border-radius: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
 
-    .badge {
-        display: inline-block;
-        background: #103d29;
-        color: #19d477;
-        padding: 9px 18px;
-        border-radius: 30px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
+h1 {
+    font-size: 44px;
+    margin: 15px 0;
+}
 
-    h1 {
-        font-size: 46px;
-        margin: 15px 0;
-    }
+p {
+    color: #c7d5ce;
+    font-size: 18px;
+    line-height: 1.6;
+}
 
-    h2 {
-        font-size: 30px;
-        margin-bottom: 30px;
-    }
+button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
 
-    p {
-        color: #c7d5ce;
-        font-size: 18px;
-        line-height: 1.6;
-    }
+.main-button {
+    margin-top: 25px;
+    padding: 16px 35px;
+    background: #19d477;
+    color: #061a12;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
 
-    button {
-        border: none;
-        cursor: pointer;
-        font-family: inherit;
-    }
+.main-button:hover {
+    background: #2ee58a;
+}
 
-    .main-button {
-        margin-top: 25px;
-        padding: 16px 35px;
-        background: #19d477;
-        color: #061a12;
-        border-radius: 10px;
-        font-size: 18px;
-        font-weight: bold;
-    }
+.progress {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
 
-    .main-button:hover {
-        background: #2ee58a;
-    }
+.level {
+    padding: 8px 11px;
+    background: #103022;
+    color: #8ea79b;
+    border-radius: 7px;
+    font-size: 13px;
+}
 
-    .progress {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 35px;
-    }
+.level.active {
+    background: #19d477;
+    color: #061a12;
+    font-weight: bold;
+}
 
-    .level {
-        padding: 9px 13px;
-        background: #103022;
-        color: #8ea79b;
-        border-radius: 8px;
-        font-size: 14px;
-    }
+.question-box {
+    background: #0b261a;
+    border: 1px solid #183f2c;
+    border-radius: 16px;
+    padding: 32px 24px;
+}
 
-    .level.active {
-        background: #19d477;
-        color: #061a12;
-        font-weight: bold;
-    }
+.question-number {
+    color: #19d477;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
 
-    .question-box {
-        background: #0b261a;
-        border: 1px solid #183f2c;
-        border-radius: 16px;
-        padding: 35px 25px;
-    }
+.question {
+    font-size: 26px;
+    line-height: 1.45;
+    margin-bottom: 28px;
+}
 
-    .question-number {
-        color: #19d477;
-        font-weight: bold;
-        margin-bottom: 12px;
-    }
+.answers {
+    display: grid;
+    gap: 12px;
+}
 
-    .question {
-        font-size: 27px;
-        line-height: 1.4;
-        margin-bottom: 30px;
-    }
+.answer {
+    width: 100%;
+    padding: 17px;
+    border-radius: 10px;
+    background: #123524;
+    color: white;
+    font-size: 17px;
+    text-align: left;
+    border: 1px solid #1d4d36;
+}
 
-    .answers {
-        display: grid;
-        gap: 12px;
-    }
+.answer:hover {
+    background: #174a31;
+    border-color: #19d477;
+}
 
-    .answer {
-        width: 100%;
-        padding: 17px;
-        border-radius: 10px;
-        background: #123524;
-        color: white;
-        font-size: 17px;
-        text-align: left;
-        border: 1px solid #1d4d36;
-    }
+.answer.correct {
+    background: #126a3b;
+    border-color: #19d477;
+}
 
-    .answer:hover {
-        background: #174a31;
-        border-color: #19d477;
-    }
+.answer.wrong {
+    background: #702b2b;
+    border-color: #e35b5b;
+}
 
-    .answer.correct {
-        background: #126a3b;
-        border-color: #19d477;
-    }
+.final-question {
+    font-size: 25px;
+    line-height: 1.5;
+    text-align: left;
+    background: #102d20;
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
 
-    .answer.wrong {
-        background: #702b2b;
-        border-color: #e35b5b;
-    }
+.clue {
+    margin: 10px 0;
+    color: #d7e3dd;
+}
 
-    .result-number {
-        font-size: 80px;
-        color: #19d477;
-        font-weight: bold;
-        margin: 20px 0;
-    }
+.answer-input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    border: 2px solid #28563e;
+    background: #071a12;
+    color: white;
+    font-size: 18px;
+    margin-top: 15px;
+    outline: none;
+}
 
-    .small {
-        color: #8ea79b;
-        font-size: 14px;
-    }
+.answer-input:focus {
+    border-color: #19d477;
+}
 
-    footer {
-        text-align: center;
-        padding: 25px;
-        color: #62766d;
-        font-size: 14px;
-    }
+.result-number {
+    font-size: 78px;
+    color: #19d477;
+    font-weight: bold;
+    margin: 20px 0;
+}
 
-    @media (max-width: 600px) {
-        h1 {
-            font-size: 36px;
-        }
+.small {
+    color: #8ea79b;
+    font-size: 14px;
+}
 
-        .question {
-            font-size: 23px;
-        }
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #62766d;
+    font-size: 14px;
+}
 
-        .result-number {
-            font-size: 65px;
-        }
-    }
+@media (max-width: 600px) {
+    h1 { font-size: 36px; }
+    .question { font-size: 23px; }
+    .result-number { font-size: 65px; }
+}
 </style>
 </head>
 
@@ -212,72 +220,106 @@
 
 <div class="container">
 
-    <!-- HOME -->
-    <section id="homeScreen" class="screen">
+<section id="homeScreen" class="screen">
 
-        <div class="badge">THE FOOTBALL CHALLENGE</div>
+    <div class="badge">THE FOOTBALL CHALLENGE</div>
 
-        <h1>Can you reach 1%?</h1>
+    <h1>Can you reach 1%?</h1>
+
+    <p>
+        Ten questions. Increasing difficulty.
+        One final challenge where you must type the answer.
+    </p>
+
+    <button class="main-button" onclick="startGame()">
+        PLAY THE QUIZ
+    </button>
+
+    <p class="small">
+        90% → 80% → 70% → 60% → 50% → 40% → 30% → 20% → 10% → 1%
+    </p>
+
+</section>
+
+
+<section id="quizScreen" class="screen hidden">
+
+    <div class="progress" id="progress"></div>
+
+    <div class="question-box">
+
+        <div class="question-number" id="questionNumber"></div>
+
+        <div class="question" id="question"></div>
+
+        <div class="answers" id="answers"></div>
+
+    </div>
+
+</section>
+
+
+<section id="finalScreen" class="screen hidden">
+
+    <div class="badge">THE 1% FINAL</div>
+
+    <h1>Can you solve it?</h1>
+
+    <div class="final-question">
+
+        <div class="clue">• I played in the Champions League for three different clubs.</div>
+
+        <div class="clue">• I won the competition with one of them.</div>
+
+        <div class="clue">• I also played in England, Spain and Italy.</div>
+
+        <div class="clue">• I scored in a Champions League final.</div>
+
+        <div class="clue">• I am not Cristiano Ronaldo.</div>
 
         <p>
-            Start with an easier football question and work
-            your way through increasingly difficult challenges.
+            Who am I?
         </p>
 
-        <button class="main-button" onclick="startGame()">
-            PLAY THE QUIZ
-        </button>
+    </div>
 
-        <p class="small">
-            9 questions • One chance • Can you make the final?
-        </p>
+    <input
+        id="finalAnswer"
+        class="answer-input"
+        type="text"
+        placeholder="Type your answer..."
+        autocomplete="off"
+    >
 
-    </section>
+    <br>
 
+    <button class="main-button" onclick="checkFinalAnswer()">
+        SUBMIT ANSWER
+    </button>
 
-    <!-- QUIZ -->
-    <section id="quizScreen" class="screen hidden">
-
-        <div class="progress" id="progress"></div>
-
-        <div class="question-box">
-
-            <div class="question-number" id="questionNumber"></div>
-
-            <div class="question" id="question"></div>
-
-            <div class="answers" id="answers"></div>
-
-        </div>
-
-    </section>
+</section>
 
 
-    <!-- RESULT -->
-    <section id="resultScreen" class="screen hidden">
+<section id="resultScreen" class="screen hidden">
 
-        <div class="badge">YOUR RESULT</div>
+    <div class="badge">YOUR RESULT</div>
 
-        <h1 id="resultTitle"></h1>
+    <h1 id="resultTitle"></h1>
 
-        <div class="result-number" id="resultPercentage"></div>
+    <div class="result-number" id="resultPercentage"></div>
 
-        <p id="resultMessage"></p>
+    <p id="resultMessage"></p>
 
-        <button class="main-button" onclick="startGame()">
-            PLAY AGAIN
-        </button>
+    <button class="main-button" onclick="startGame()">
+        PLAY AGAIN
+    </button>
 
-        <p class="small">
-            Accounts and saved scores are coming next.
-        </p>
-
-    </section>
+</section>
 
 </div>
 
 <footer>
-    © 2026 Football Quiz Club
+© 2026 Football Quiz Club
 </footer>
 
 
@@ -285,113 +327,113 @@
 
 const questions = [
 
-    {
-        level: "90%",
-        question: "Which country won the 1966 FIFA World Cup?",
-        answers: [
-            "Brazil",
-            "England",
-            "Germany",
-            "Argentina"
-        ],
-        correct: 1
-    },
+{
+    level: "90%",
+    question: "Which club has won the most European Cups/UEFA Champions League titles?",
+    answers: [
+        "AC Milan",
+        "Liverpool",
+        "Real Madrid",
+        "Bayern Munich"
+    ],
+    correct: 2
+},
 
-    {
-        level: "80%",
-        question: "Which club did Lionel Messi join as a professional in 2004?",
-        answers: [
-            "Real Madrid",
-            "Manchester United",
-            "Barcelona",
-            "Inter Milan"
-        ],
-        correct: 2
-    },
+{
+    level: "80%",
+    question: "Which player scored the winning goal in the 1999 UEFA Champions League final?",
+    answers: [
+        "Ole Gunnar Solskjær",
+        "Teddy Sheringham",
+        "David Beckham",
+        "Ryan Giggs"
+    ],
+    correct: 0
+},
 
-    {
-        level: "70%",
-        question: "Which country did Zinedine Zidane represent at international level?",
-        answers: [
-            "France",
-            "Italy",
-            "Spain",
-            "Belgium"
-        ],
-        correct: 0
-    },
+{
+    level: "70%",
+    question: "Which club became European champions in 1991 after winning the final on penalties against Marseille?",
+    answers: [
+        "Red Star Belgrade",
+        "Steaua București",
+        "PSV Eindhoven",
+        "Porto"
+    ],
+    correct: 0
+},
 
-    {
-        level: "60%",
-        question: "Which club plays its home matches at Anfield?",
-        answers: [
-            "Everton",
-            "Liverpool",
-            "Manchester City",
-            "Leeds United"
-        ],
-        correct: 1
-    },
+{
+    level: "60%",
+    question: "Which player holds the all-time record for Champions League appearances?",
+    answers: [
+        "Iker Casillas",
+        "Cristiano Ronaldo",
+        "Lionel Messi",
+        "Thomas Müller"
+    ],
+    correct: 1
+},
 
-    {
-        level: "50%",
-        question: "Which player scored the famous 'Hand of God' goal at the 1986 World Cup?",
-        answers: [
-            "Pelé",
-            "Diego Maradona",
-            "Johan Cruyff",
-            "Michel Platini"
-        ],
-        correct: 1
-    },
+{
+    level: "50%",
+    question: "Which club lost consecutive European Cup finals in 1997 and 1998?",
+    answers: [
+        "Valencia",
+        "Juventus",
+        "Bayern Munich",
+        "Arsenal"
+    ],
+    correct: 1
+},
 
-    {
-        level: "30%",
-        question: "Which club won the first European Cup in 1956?",
-        answers: [
-            "Real Madrid",
-            "AC Milan",
-            "Benfica",
-            "Ajax"
-        ],
-        correct: 0
-    },
+{
+    level: "40%",
+    question: "Which club has appeared in more European Cup/Champions League finals than any other?",
+    answers: [
+        "AC Milan",
+        "Bayern Munich",
+        "Liverpool",
+        "Real Madrid"
+    ],
+    correct: 3
+},
 
-    {
-        level: "10%",
-        question: "Which English club was the first to win the European Cup?",
-        answers: [
-            "Liverpool",
-            "Manchester United",
-            "Nottingham Forest",
-            "Chelsea"
-        ],
-        correct: 1
-    },
+{
+    level: "30%",
+    question: "Which team won the 1974 European Cup final replay after the original match finished 1–1?",
+    answers: [
+        "Bayern Munich",
+        "Atlético Madrid",
+        "Ajax",
+        "Borussia Mönchengladbach"
+    ],
+    correct: 0
+},
 
-    {
-        level: "5%",
-        question: "Which country has won the men's FIFA World Cup the most times?",
-        answers: [
-            "Germany",
-            "Italy",
-            "Argentina",
-            "Brazil"
-        ],
-        correct: 3
-    },
+{
+    level: "20%",
+    question: "Which player has won the Champions League six times, all six with Real Madrid?",
+    answers: [
+        "Karim Benzema",
+        "Toni Kroos",
+        "Dani Carvajal",
+        "Sergio Ramos"
+    ],
+    correct: 2
+},
 
-    {
-        level: "1%",
-        question: "A footballer has played for Manchester United, Real Madrid and Juventus. Which player could this be?",
-        answers: [
-            "David Beckham",
-            "Cristiano Ronaldo",
-            "Wayne Rooney",
-            "Ryan Giggs"
-        ],
-        correct: 1
-    }
+{
+    level: "10%",
+    question: "Which club has a perfect record in European Cup/Champions League finals, having won both finals it played?",
+    answers: [
+        "Nottingham Forest",
+        "Ajax",
+        "Barcelona",
+        "Inter Milan"
+    ],
+    correct: 0
+}
 
 ];
 
@@ -406,6 +448,7 @@ function startGame() {
 
     document.getElementById("homeScreen").classList.add("hidden");
     document.getElementById("resultScreen").classList.add("hidden");
+    document.getElementById("finalScreen").classList.add("hidden");
     document.getElementById("quizScreen").classList.remove("hidden");
 
     showQuestion();
@@ -417,7 +460,7 @@ function showQuestion() {
     const q = questions[currentQuestion];
 
     document.getElementById("questionNumber").textContent =
-        "Challenge " + (currentQuestion + 1) + " of " + questions.length;
+        "Challenge " + (currentQuestion + 1) + " of 10";
 
     document.getElementById("question").textContent =
         q.question;
@@ -426,19 +469,24 @@ function showQuestion() {
 
     progress.innerHTML = "";
 
-    questions.forEach((question, index) => {
+    const allLevels = [
+        "90%", "80%", "70%", "60%", "50%",
+        "40%", "30%", "20%", "10%", "1%"
+    ];
 
-        const level = document.createElement("div");
+    allLevels.forEach((level, index) => {
 
-        level.className = "level";
+        const item = document.createElement("div");
+
+        item.className = "level";
 
         if (index === currentQuestion) {
-            level.classList.add("active");
+            item.classList.add("active");
         }
 
-        level.textContent = question.level;
+        item.textContent = level;
 
-        progress.appendChild(level);
+        progress.appendChild(item);
 
     });
 
@@ -457,9 +505,7 @@ function showQuestion() {
         button.textContent = answer;
 
         button.onclick = function() {
-
             checkAnswer(index, button);
-
         };
 
         answers.appendChild(button);
@@ -493,7 +539,11 @@ function checkAnswer(selected, button) {
 
             if (currentQuestion >= questions.length) {
 
-                showResult(true);
+                document.getElementById("quizScreen")
+                    .classList.add("hidden");
+
+                document.getElementById("finalScreen")
+                    .classList.remove("hidden");
 
             } else {
 
@@ -512,10 +562,52 @@ function checkAnswer(selected, button) {
         gameOver = true;
 
         setTimeout(function() {
-
             showResult(false);
-
         }, 900);
+
+    }
+
+}
+
+
+function checkFinalAnswer() {
+
+    const input =
+        document.getElementById("finalAnswer");
+
+    const answer =
+        input.value.trim().toLowerCase();
+
+    /*
+       For this prototype, the accepted answer is:
+       Cristiano Ronaldo is excluded, and the intended
+       answer is Gareth Bale.
+    */
+
+    if (
+        answer.includes("gareth bale") ||
+        answer === "bale"
+    ) {
+
+        showResult(true);
+
+    } else {
+
+        document.getElementById("finalScreen")
+            .classList.add("hidden");
+
+        document.getElementById("resultScreen")
+            .classList.remove("hidden");
+
+        document.getElementById("resultTitle")
+            .textContent = "SO CLOSE";
+
+        document.getElementById("resultPercentage")
+            .textContent = "10%";
+
+        document.getElementById("resultMessage")
+            .textContent =
+            "The 1% answer was Gareth Bale. You reached the final challenge.";
 
     }
 
@@ -524,31 +616,41 @@ function checkAnswer(selected, button) {
 
 function showResult(won) {
 
-    document.getElementById("quizScreen").classList.add("hidden");
-    document.getElementById("resultScreen").classList.remove("hidden");
+    document.getElementById("quizScreen")
+        .classList.add("hidden");
 
-    const percentage =
-        won ? "1%" : questions[currentQuestion].level;
+    document.getElementById("finalScreen")
+        .classList.add("hidden");
 
-    document.getElementById("resultPercentage").textContent =
-        percentage;
+    document.getElementById("resultScreen")
+        .classList.remove("hidden");
 
 
     if (won) {
 
-        document.getElementById("resultTitle").textContent =
-            "YOU REACHED 1%!";
+        document.getElementById("resultTitle")
+            .textContent = "YOU REACHED 1%!";
 
-        document.getElementById("resultMessage").textContent =
-            "Outstanding. You made it through every challenge.";
+        document.getElementById("resultPercentage")
+            .textContent = "1%";
+
+        document.getElementById("resultMessage")
+            .textContent =
+            "Incredible. You solved the final challenge.";
 
     } else {
 
-        document.getElementById("resultTitle").textContent =
-            "QUIZ OVER";
+        document.getElementById("resultTitle")
+            .textContent = "QUIZ OVER";
 
-        document.getElementById("resultMessage").textContent =
-            "You reached the " + percentage +
+        document.getElementById("resultPercentage")
+            .textContent =
+            questions[currentQuestion].level;
+
+        document.getElementById("resultMessage")
+            .textContent =
+            "You reached the " +
+            questions[currentQuestion].level +
             " challenge. Can you go further next time?";
 
     }
