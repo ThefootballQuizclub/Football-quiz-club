@@ -274,7 +274,7 @@ async function startGame(){
   $("playButton").disabled=true;
   try{
     const data=await quizApi({action:"start",guest_id:currentUser()?undefined:guestId()});
-    gameToken=data.token;currentQuestion=data.question;currentIndex=0;gameStartedAt=Date.now();lifelineUsed=false;lastResult=null;
+    stopQuestionClock();answerSubmitting=false;gameToken=data.token;currentQuestion=data.question;currentIndex=0;gameStartedAt=Date.now();lifelineUsed=false;lastResult=null;
     if(!currentUser()) localStorage.setItem(guestUsedKey,"1");
     persistGame();startDraw();
   }catch(e){
@@ -338,7 +338,7 @@ async function submitAnswer(answer,container){
     const next=$("continueButton");next.onclick=null;
     if(!data.correct){next.textContent="VIEW YOUR RESULT";next.onclick=()=>showResult(false,data);}
     else if(data.finished&&data.result==="win"){next.textContent="VIEW 1% RESULT";next.onclick=()=>showResult(true,data);}
-    else{next.textContent="DRAW THE NEXT BALL";next.onclick=()=>{currentIndex++;currentQuestion=data.next_question;persistGame();startDraw();};}
+    else{next.textContent="DRAW THE NEXT BALL";next.onclick=()=>{answerSubmitting=false;currentIndex++;currentQuestion=data.next_question;persistGame();startDraw();};}
   }catch(e){
     answerSubmitting=false;
     $("quizError").textContent=e.message;container.querySelectorAll("button,input").forEach(x=>x.disabled=false);
