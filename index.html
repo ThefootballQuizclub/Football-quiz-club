@@ -264,6 +264,8 @@ const supabase = createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:tr
 const $ = id => document.getElementById(id);
 let authSession = null, profile = null, currentQuestion = null, gameToken = null, currentIndex = 0, gameStartedAt = 0, lifelineUsed = false, authMode = "signup", boardPeriod = "all", toastTimer = null, drawTimer = null, clockInterval = null, questionDeadline = 0, questionTimeLimit = 30, answerSubmitting = false, lastResult = null;
 let gameMode = "classic", challengeDate = null, totalMistakes = 0, puzzleState = null, archiveDates = [];
+let obscureToken = null, obscurePrompts = [], obscurePicks = [], obscureIndex = 0, obscureTotalScore = 0, obscurePrompt = null, obscureDeadline = 0, obscureInterval = null, obscureSubmitting = false, obscureTimeLimit = 25;
+const obscureActiveKey = "fqc_obscure_xi_v1";
 const guestKey = "fqc_guest_device_v1", guestUsedKey = "fqc_guest_game_used_v1", activeKey = "fqc_active_game_v1";
 
 function ukDailyDate(){
@@ -284,7 +286,7 @@ function notify(message){
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3300);
 }
 function showView(id){
-  ["homeView","drawView","quizView","resultView","puzzleView","archiveView","boardView"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
+  ["homeView","drawView","quizView","resultView","puzzleView","archiveView","obscureView","obscureResultView","boardView"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function openAuth(mode="signup"){
@@ -579,7 +581,9 @@ function updateStreakDisplay(stats){
   $("puzzleStreakValue").textContent=String(stats?.puzzle_current_streak??0);
   $("quizBestValue").textContent=String(stats?.quiz_longest_streak??0);
   $("puzzleBestValue").textContent=String(stats?.puzzle_longest_streak??0);
-  $("streakNote").textContent=currentUser()?"Daily streaks update when you complete the Daily Challenge or finish the player puzzle.":"Sign in to start saving your daily streaks.";
+  $("obscureStreakValue").textContent=String(stats?.obscure_xi_current_streak??0);
+  $("obscureBestValue").textContent=String(stats?.obscure_xi_longest_streak??0);
+  $("streakNote").textContent=currentUser()?"Complete each daily game to build its own streak.":"Sign in to start saving your daily streaks.";
 }
 async function loadStats(){
   if(!currentUser()){updateStreakDisplay(null);return;}
@@ -708,9 +712,218 @@ async function unsubscribeMail(){
   finally{$("mailUnsubscribe").disabled=false;}
 }
 
+
+// OBSCURE XI — shared 4-4-2 daily rarity game
+function persistObscureState(){
+  if(!obscureToken)return;
+  try{sessionStorage.setItem(obscureActiveKey,JSON.stringify({
+    token:obscureToken,prompts:obscurePrompts,picks:obscurePicks,index:obscureIndex,
+    totalScore:obscureTotalScore,savedAt:Date.now()
+  }));}catch{}
+}
+function clearObscureState(){
+  sessionStorage.removeItem(obscureActiveKey);
+  obscureToken=null;obscurePrompts=[];obscurePicks=[];obscureIndex=0;obscureTotalScore=0;obscurePrompt=null;
+}
+function stopObscureClock(){
+  if(obscureInterval){clearInterval(obscureInterval);obscureInterval=null;}
+}
+function makeObscurePitch(targetId,picks=[],activeSlot=-1,showScores=false){
+  const target=$(targetId);target.replaceChildren();
+  ["pitch-half","pitch-circle","pitch-box top","pitch-box bottom"].forEach(cls=>{
+    const el=document.createElement("div");el.className=cls;target.append(el);
+  });
+  const rows=[
+    {className:"pitch-row forwards",slots:[9,10]},
+    {className:"pitch-row midfield",slots:[5,6,7,8]},
+    {className:"pitch-row defence",slots:[1,2,3,4]},
+    {className:"pitch-row keeper",slots:[0]}
+  ];
+  const roles=["GK","DEF","DEF","DEF","DEF","MID","MID","MID","MID","FWD","FWD"];
+  const numbers=["1","3","4","5","2","7","8","6","11","9","10"];
+  rows.forEach(row=>{
+    const line=document.createElement("div");line.className=row.className;
+    row.slots.forEach(slot=>{
+      const pick=picks.find(p=>Number(p.slot)===slot);
+      const marker=document.createElement("div");
+      marker.className="ob-player";
+      marker.dataset.obSlot=String(slot);
+      if(slot===activeSlot&&!pick)marker.classList.add("active");
+      if(pick?.player_name)marker.classList.add("filled");
+      if(pick&&!pick.player_name)marker.classList.add("empty");
+      const role=document.createElement("b");role.textContent=roles[slot];
+      const shirt=document.createElement("span");shirt.textContent=numbers[slot];
+      const name=document.createElement("small");
+      name.textContent=pick?.player_name
+        ? (showScores?pick.player_name+" · "+pick.score+" pts":pick.player_name)
+        : (pick?"No score":"Empty");
+      marker.append(role,shirt,name);line.append(marker);
+    });
+    target.append(line);
+  });
+}
+function renderObscureTimer(){
+  const ms=Math.max(0,obscureDeadline-Date.now());
+  const seconds=Math.ceil(ms/1000);
+  $("obscureTimerLabel").textContent=seconds+" SECOND"+(seconds===1?"":"S");
+  $("obscureTimerFill").style.width=Math.max(0,Math.min(100,ms/(obscureTimeLimit*1000)*100))+"%";
+  $("obscureTimer").classList.toggle("urgent",seconds<=10);
+  if(ms<=0&&!obscureSubmitting){
+    stopObscureClock();
+    submitObscureAnswer("__FQC_TIME_EXPIRED__");
+  }
+}
+async function beginObscureSlot(){
+  if(!obscureToken)return;
+  try{
+    const d=await quizApi({action:"obscure_begin",token:obscureToken});
+    obscurePrompt=d.prompt;obscureIndex=Number(d.index);obscurePicks=Array.isArray(d.picks)?d.picks:obscurePicks;
+    obscureTotalScore=Number(d.total_score??obscureTotalScore);
+    obscureTimeLimit=Number(d.time_limit_seconds)||25;
+    obscureDeadline=Date.parse(d.question_started_at)+obscureTimeLimit*1000;
+    $("obscureSlotLabel").textContent="POSITION "+(obscureIndex+1)+" OF 11";
+    $("obscurePosition").textContent=obscurePrompt.role;
+    $("obscureQuestion").textContent=obscurePrompt.question;
+    $("obscureHint").textContent=obscurePrompt.answer_count+" checked answers on the sheet. Pick one you know — a rarer player scores more.";
+    $("obscureTotalScore").textContent=String(obscureTotalScore);
+    $("obscureAnswer").value="";$("obscureAnswer").disabled=false;$("obscureSubmit").disabled=false;
+    $("obscureMessage").className="obscure-message";
+    $("obscureMessage").textContent="25 seconds. Type a player who represented "+obscurePrompt.club+" in the Premier League.";
+    makeObscurePitch("obscurePitch",obscurePicks,obscureIndex,false);
+    persistObscureState();
+    showView("obscureView");
+    stopObscureClock();renderObscureTimer();
+    if(obscureDeadline>Date.now())obscureInterval=setInterval(renderObscureTimer,200);
+    $("obscureAnswer").focus();
+  }catch(e){
+    stopObscureClock();
+    clearObscureState();
+    showView("homeView");
+    notify(e.message||"The Obscure XI slot could not be loaded.");
+  }
+}
+async function startObscureXi(){
+  if(!currentUser()){openAuth("signin");return;}
+  try{
+    const saved=JSON.parse(sessionStorage.getItem(obscureActiveKey)||"null");
+    if(saved?.token){
+      obscureToken=saved.token;obscurePrompts=saved.prompts||[];obscurePicks=saved.picks||[];
+      obscureIndex=Number(saved.index||0);obscureTotalScore=Number(saved.totalScore||0);
+      await beginObscureSlot();notify("Your Obscure XI was restored.");
+      return;
+    }
+    const d=await quizApi({action:"obscure_start"});
+    obscureToken=d.token;obscurePrompts=d.prompts||[];obscurePicks=[];obscureIndex=0;obscureTotalScore=0;
+    obscureTimeLimit=Number(d.time_limit_seconds)||25;
+    $("obscureDateLabel").textContent=d.challenge_date+" • DAILY XI";
+    persistObscureState();
+    await beginObscureSlot();
+  }catch(e){
+    if(e.data?.code==="OBSCURE_ALREADY_PLAYED"){
+      notify("You've completed today's Obscure XI. A new formation arrives at 8am tomorrow.");
+      loadStats();
+    }else notify(e.message||"The Obscure XI could not be started.");
+  }
+}
+async function submitObscureAnswer(answer){
+  if(obscureSubmitting||!obscureToken)return;
+  const isTimeout=answer==="__FQC_TIME_EXPIRED__";
+  const cleaned=String(answer||"").trim();
+  if(!isTimeout&&!cleaned){$("obscureMessage").textContent="Enter a player's name first.";return;}
+  obscureSubmitting=true;
+  $("obscureAnswer").disabled=true;$("obscureSubmit").disabled=true;
+  try{
+    const d=await quizApi({action:"obscure_answer",token:obscureToken,answer:cleaned});
+    if(d.valid===false&&!d.slot_pick){
+      obscureSubmitting=false;
+      $("obscureAnswer").disabled=false;$("obscureSubmit").disabled=false;
+      $("obscureMessage").className="obscure-message bad";
+      $("obscureMessage").textContent=d.error||"That answer didn't match. Try another player.";
+      $("obscureAnswer").value="";$("obscureAnswer").focus();
+      return;
+    }
+    stopObscureClock();
+    obscurePicks=d.picks||obscurePicks;
+    obscureTotalScore=Number(d.total_score??obscureTotalScore);
+    obscureIndex=Number(d.next_index??obscureIndex+1);
+    $("obscureTotalScore").textContent=String(obscureTotalScore);
+    if(d.slot_pick?.player_name){
+      $("obscureMessage").className="obscure-message good";
+      $("obscureMessage").textContent=d.slot_pick.player_name+" accepted — "+d.slot_pick.score+" points ("+d.slot_pick.tier+").";
+    }else{
+      $("obscureMessage").className="obscure-message bad";
+      $("obscureMessage").textContent="Time up — no points for this shirt. Move on to the next position.";
+    }
+    makeObscurePitch("obscurePitch",obscurePicks,obscureIndex,false);
+    persistObscureState();
+    if(d.finished){
+      obscureSubmitting=false;
+      clearObscureState();
+      showObscureResult(d);
+      return;
+    }
+    setTimeout(async()=>{obscureSubmitting=false;await beginObscureSlot();},850);
+  }catch(e){
+    obscureSubmitting=false;
+    $("obscureAnswer").disabled=false;$("obscureSubmit").disabled=false;
+    $("obscureMessage").className="obscure-message bad";
+    $("obscureMessage").textContent=e.message||"Your answer couldn't be checked. Please try again.";
+    if(obscureDeadline>Date.now()&&!obscureInterval)obscureInterval=setInterval(renderObscureTimer,200);
+    renderObscureTimer();
+  }
+}
+function showObscureResult(data){
+  const picks=data.picks||obscurePicks;
+  const score=Number(data.total_score??0);
+  const filled=picks.filter(p=>p.player_name).length;
+  $("obscureFinalScore").textContent=String(score);
+  $("obscureFilledCount").textContent=filled+" / 11";
+  $("obscureAverage").textContent=String(Math.round(score/11));
+  $("obscureFinalCopy").textContent="You found "+filled+" players and scored "+score+" of a possible 1,100. "+(score>=850?"A seriously obscure selection.":score>=600?"A strong football knowledge performance.":score>=350?"Some good deep cuts in that side.":"There are plenty more hidden names to discover.");
+  makeObscurePitch("obscureResultPitch",picks,-1,true);
+  const wrap=$("obscureAnswerSheets");wrap.replaceChildren();
+  (data.answer_sheet||[]).forEach(entry=>{
+    const details=document.createElement("details");details.className="obscure-sheet";
+    const summary=document.createElement("summary");
+    const title=document.createElement("strong");title.textContent=entry.role+" · "+entry.club;
+    const qty=document.createElement("span");qty.textContent=entry.answer_count+" VALID ANSWERS";
+    summary.append(title,qty);details.append(summary);
+    const list=document.createElement("div");list.className="obscure-sheet-list";
+    (entry.answers||[]).forEach(ans=>{
+      const chip=document.createElement("div");chip.className="obscure-answer-chip";
+      const name=document.createElement("span");name.textContent=ans.player_name;
+      const points=document.createElement("b");points.textContent=ans.rarity_score+"/100";
+      chip.append(name,points);list.append(chip);
+    });
+    details.append(list);wrap.append(details);
+  });
+  if(!data.answer_sheet?.length){
+    const note=document.createElement("div");note.className="empty";note.textContent="The answer sheets are unavailable right now.";wrap.append(note);
+  }
+  $("obscureResultHome").onclick=()=>{loadStats();showView("homeView");};
+  showView("obscureResultView");
+  loadStats();
+}
+async function resumeObscureIfSaved(){
+  try{
+    const saved=JSON.parse(sessionStorage.getItem(obscureActiveKey)||"null");
+    if(!saved?.token||!currentUser())return false;
+    obscureToken=saved.token;obscurePrompts=saved.prompts||[];obscurePicks=saved.picks||[];
+    obscureIndex=Number(saved.index||0);obscureTotalScore=Number(saved.totalScore||0);
+    await beginObscureSlot();return true;
+  }catch(e){
+    clearObscureState();return false;
+  }
+}
+
+
 async function init(){
   $("playButton").addEventListener("click",startGame);
   $("dailyPlayButton").addEventListener("click",()=>startGame());
+  $("obscureOpenButton").addEventListener("click",startObscureXi);
+  $("obscureForm").addEventListener("submit",ev=>{ev.preventDefault();submitObscureAnswer($("obscureAnswer").value);});
+  $("obscureQuit").addEventListener("click",()=>{if(confirm("Leave your Obscure XI? Your current formation will be saved on this browser for you to resume.")){stopObscureClock();showView("homeView");}});
+  $("obscureResultHome").addEventListener("click",()=>showView("homeView"));
   $("todayNav").addEventListener("click",()=>showView("homeView"));
   $("puzzleOpenButton").addEventListener("click",loadPuzzle);
   $("archiveOpenButton").addEventListener("click",openArchive);
@@ -759,7 +972,9 @@ async function init(){
   const {data}=await supabase.auth.getSession();authSession=data.session;await refreshProfile();renderNav();
   await checkHealth();await loadStats();
   if(!currentUser()&&isGuestUsed()){$("homeStatus").textContent="Your one free guest game has been used. Join the club or sign in for your next game.";}
-  if(!await resumeGame())showView("homeView");
+  if(!await resumeGame()){
+    if(!await resumeObscureIfSaved())showView("homeView");
+  }
   renderNav();
 }
 init().catch(e=>{console.error(e);$("homeStatus").textContent="The clubhouse had trouble loading. Refresh to try again.";});
