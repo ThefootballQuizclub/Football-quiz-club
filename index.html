@@ -35,6 +35,25 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
 @media(max-width:760px){.mail-tile,.puzzle-panel{grid-template-columns:1fr}.coming-next{display:block}.coming-next p{margin-top:11px}.archive-list{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.hub-heading{align-items:flex-start;flex-direction:column}.hub-grid{grid-template-columns:1fr}.hub-card{min-height:0}.hub-card .hub-meta{padding-top:13px}.mail-tile{padding:18px}.puzzle-panel{padding:15px}.puzzle-board{padding:12px}.puzzle-cell{font-size:17px}.archive-list{grid-template-columns:1fr}.daily-run-info{font-size:7px}}
 
+
+/* OBSCURE XI — original 4-4-2 rarity game */
+.hub-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.obscure-hub-card{background:radial-gradient(ellipse at 90% 0,#b4f36a20,transparent 55%),linear-gradient(145deg,#1a3b27,#09170f)}
+.obscure-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:stretch}
+.obscure-pitch-card,.obscure-question-card{padding:20px;border:1px solid var(--line);border-radius:11px;background:linear-gradient(145deg,#122b1c,#07140c)}
+.obscure-scoreline{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:15px}.obscure-scoreline p{margin:6px 0 0;color:var(--muted);font-size:10px;line-height:1.6}.obscure-total{text-align:right;color:#96a997;font-size:10px}.obscure-total strong{display:block;color:var(--green);font-size:34px;line-height:1;letter-spacing:-.06em}
+.obscure-pitch{position:relative;overflow:hidden;isolation:isolate;min-height:485px;padding:23px 12px;border:2px solid #e8f5e82b;border-radius:9px;background:repeating-linear-gradient(0deg,#185d35 0,#185d35 38px,#1c663a 38px,#1c663a 76px);display:flex;flex-direction:column;justify-content:space-between}
+.obscure-pitch:before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,transparent 49.7%,#f0fff04a 49.7%,#f0fff04a 50.3%,transparent 50.3%)}
+.pitch-half{position:absolute;z-index:-1;left:0;right:0;top:50%;border-top:1px solid #f0fff04a}.pitch-circle{position:absolute;z-index:-1;left:50%;top:50%;width:94px;height:94px;border:1px solid #f0fff04a;border-radius:50%;transform:translate(-50%,-50%)}
+.pitch-box{position:absolute;z-index:-1;left:29%;width:42%;height:45px;border:1px solid #f0fff044}.pitch-box.top{top:0;border-top:0}.pitch-box.bottom{bottom:0;border-bottom:0}
+.pitch-row{display:flex;justify-content:center;align-items:center;gap:clamp(8px,2vw,23px);position:relative}.pitch-row.forwards{padding:0 0 3px}.pitch-row.midfield{padding:9px 0}.pitch-row.defence{padding:9px 0}.pitch-row.keeper{padding:3px 0 0}
+.ob-player{position:relative;width:clamp(62px,8vw,92px);min-height:78px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;border:1px solid #efffea4a;border-radius:8px;padding:6px 4px 5px;background:#07170fae;color:#f2fff2;text-align:center;transition:.18s}.ob-player b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#e5f5d9;color:#17331f;font-size:8px;font-weight:1000}.ob-player span{position:absolute;top:7px;right:6px;color:#d8ead7;font-size:7px;font-weight:900}.ob-player small{max-width:100%;color:#e3f1e4;font-size:8px;line-height:1.15;font-weight:850;overflow-wrap:anywhere}.ob-player.active{border-color:#ddff9c;box-shadow:0 0 0 2px #b4f36a4a,0 0 20px #b4f36a31;background:#1c422b}.ob-player.filled b{background:#b4f36a}.ob-player.filled small{color:#ddff9c}.obscure-pitch-foot{display:flex;justify-content:space-between;gap:9px;margin-top:12px;color:#93aa98;font-size:7px;font-weight:950;letter-spacing:.12em}
+.obscure-question-card{display:flex;flex-direction:column}.obscure-question-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:21px}.obscure-question{margin:10px 0 9px;font-size:clamp(24px,3vw,36px);line-height:1.07;letter-spacing:-.055em}.obscure-hint{color:var(--muted);font-size:11px;line-height:1.7}.obscure-question-card .clock{margin:0 0 20px}.obscure-entry{display:flex;gap:8px;margin-top:12px}.obscure-entry .input{text-transform:none}.obscure-message{min-height:45px;margin-top:12px;color:#b5c7b7;font-size:10px;line-height:1.6}.obscure-message.good{color:var(--green)}.obscure-message.bad{color:#ffc1a7}.obscure-rule-note{margin-top:auto;padding:14px;border:1px solid #b4f36a26;border-radius:7px;background:#b4f36a09;display:grid;grid-template-columns:1fr auto;gap:3px 10px}.obscure-rule-note span{color:#a9bcae;font-size:8px;font-weight:950;letter-spacing:.15em}.obscure-rule-note strong{color:var(--green);font-size:16px}.obscure-rule-note small{grid-column:1/-1;color:#83998a;font-size:9px;line-height:1.5}
+.obscure-result-head{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px;border:1px solid #b4f36a42;border-radius:10px;background:linear-gradient(120deg,#183b27,#0a170f)}.obscure-result-score{display:flex;align-items:baseline;gap:7px;margin-top:6px;color:#9fb1a2}.obscure-result-score strong{color:var(--green);font-size:clamp(44px,7vw,75px);line-height:1;letter-spacing:-.08em}.obscure-result-head p{max-width:600px;color:var(--muted);font-size:11px;line-height:1.7}.obscure-result-stats{display:flex;gap:19px;text-align:right}.obscure-result-stats strong{display:block;font-size:18px}.obscure-result-stats span{color:#91a596;font-size:7px;font-weight:950;letter-spacing:.13em}
+.result-pitch{margin-top:15px;min-height:430px}.result-pitch .ob-player{border-color:#f3fff0aa;background:#061b10d9}.result-pitch .ob-player.empty small{color:#ffd3c4}.answer-sheet-wrap{margin-top:18px;padding:20px;border:1px solid var(--line);border-radius:10px;background:#ffffff05}.obscure-sheet-intro{color:var(--muted);font-size:10px;line-height:1.6}.obscure-answer-sheets{display:grid;grid-template-columns:1fr 1fr;gap:9px}.obscure-sheet{border:1px solid var(--line);border-radius:7px;background:#08170f;padding:11px}.obscure-sheet summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:10px;font-weight:950;list-style:none}.obscure-sheet summary::-webkit-details-marker{display:none}.obscure-sheet summary span{color:var(--green);font-size:8px}.obscure-sheet-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:11px}.obscure-answer-chip{display:flex;justify-content:space-between;gap:8px;padding:5px 7px;border-radius:4px;background:#ffffff08;color:#c5d3c7;font-size:8px}.obscure-answer-chip b{color:var(--green);font-size:8px}
+@media(max-width:1000px){.obscure-layout{grid-template-columns:1fr}.obscure-pitch{min-height:440px}.obscure-question-card{min-height:390px}}
+@media(max-width:600px){.hub-grid{grid-template-columns:1fr}.obscure-pitch-card,.obscure-question-card{padding:13px}.obscure-pitch{min-height:360px;padding:15px 4px}.ob-player{width:62px;min-height:64px;padding:5px 2px}.ob-player b{width:23px;height:23px;font-size:7px}.ob-player small{font-size:7px}.pitch-row{gap:5px}.pitch-row.midfield,.pitch-row.defence{padding:4px 0}.obscure-pitch-foot{font-size:6px}.obscure-result-head{display:block}.obscure-result-stats{justify-content:flex-start;text-align:left;margin-top:13px}.obscure-answer-sheets{grid-template-columns:1fr}.obscure-sheet-list{grid-template-columns:1fr 1fr}}
+
 </style>
 </head>
 <body>
@@ -61,7 +80,7 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
     </div>
   </div>
   <section class="daily-hub" aria-label="Daily games">
-    <div class="hub-heading"><div><span class="eyebrow">THE DAILY CLUB</span><h2>THREE WAYS TO PLAY</h2></div><span class="quiet">A NEW QUIZ EVERY DAY • 8AM UK</span></div>
+    <div class="hub-heading"><div><span class="eyebrow">THE DAILY CLUB</span><h2>FOUR WAYS TO PLAY</h2></div><span class="quiet">A NEW QUIZ EVERY DAY • 8AM UK</span></div>
     <div class="hub-grid">
       <article class="hub-card featured">
         <div class="hub-kicker">TODAY'S MAIN EVENT</div><h3>THE DAILY CHALLENGE</h3>
@@ -81,6 +100,12 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
         <div class="hub-meta">SIGNED-IN PLAYERS</div>
         <button id="archiveOpenButton" class="ghost">BROWSE THE ARCHIVE</button>
       </article>
+      <article class="hub-card featured obscure-hub-card">
+        <div class="hub-kicker">THE RARITY CHALLENGE</div><h3>OBSCURE XI</h3>
+        <p>Build a 4-4-2 from eleven Premier League players. Each slot has many valid answers. The more obscure the player, the more points you earn.</p>
+        <div class="hub-meta">11 PLAYERS • 1,100 POINTS TO PLAY FOR</div>
+        <button id="obscureOpenButton" class="btn small">BUILD YOUR XI</button>
+      </article>
       <article class="hub-card streak-card">
         <div class="hub-kicker">YOUR FORM</div><h3>STREAKS & STATS</h3>
         <div class="streak-pairs">
@@ -88,6 +113,8 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
           <div><strong id="puzzleStreakValue">—</strong><span>PLAYER PUZZLE DAYS</span></div>
           <div><strong id="quizBestValue">—</strong><span>BEST QUIZ RUN</span></div>
           <div><strong id="puzzleBestValue">—</strong><span>BEST PUZZLE RUN</span></div>
+          <div><strong id="obscureStreakValue">—</strong><span>OBSCURE XI DAYS</span></div>
+          <div><strong id="obscureBestValue">—</strong><span>BEST OBSCURE XI</span></div>
         </div>
         <p id="streakNote" class="hub-note">Sign in to start saving your daily streaks.</p>
       </article>
@@ -148,6 +175,43 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
     <div class="result-main"><div class="eyebrow">YOUR RESULT</div><h2 id="resultTitle">GAME OVER</h2><div id="resultNumber" class="result-number">90%</div><p id="resultCopy">You reached the challenge.</p><div class="result-buttons"><button id="againButton" class="btn">PLAY AGAIN</button><button id="resultBoard" class="btn secondary">LEADERBOARD</button></div><div id="resultGate" class="notice hidden">Your free guest game has been used. Join the club or sign in to unlock your next game and get your name on the leaderboard. <button id="resultJoin" class="text-button">JOIN THE CLUB →</button></div></div>
     <div class="result-side"><div class="eyebrow">PLAYER STATS</div><div class="stat"><span>STAGES CLEARED / CORRECT</span><strong id="statStages">0 / 10</strong></div><div class="stat"><span>HIGHEST STAGE</span><strong id="statReached">—</strong></div><div class="stat"><span>MISTAKES</span><strong id="statMistakes">—</strong></div><div class="stat"><span>PLAYER STATUS</span><strong id="statAccount">GUEST</strong></div><div class="stat"><span>LEADERBOARD / DAILY SAVE</span><strong id="statRank">—</strong></div></div>
   </div>
+</section>
+
+<section id="obscureView" class="view hidden">
+  <div class="topline"><div><div class="eyebrow">THE RARITY CHALLENGE • DAILY AT 8AM</div><h1 class="page-title">OBSCURE XI</h1></div><button id="obscureQuit" class="back">LEAVE GAME</button></div>
+  <div class="obscure-layout">
+    <div class="obscure-pitch-card">
+      <div class="obscure-scoreline"><div><span class="eyebrow" id="obscureDateLabel">TODAY'S XI</span><p>Build your 4-4-2. Eleven different players, one for each shirt.</p></div><div class="obscure-total"><strong id="obscureTotalScore">0</strong><span>/ 1100</span></div></div>
+      <div id="obscurePitch" class="obscure-pitch" aria-label="Your 4-4-2 formation">
+        <div class="pitch-half"></div><div class="pitch-circle"></div><div class="pitch-box top"></div><div class="pitch-box bottom"></div>
+        <div class="pitch-row forwards"><div class="ob-player" data-ob-slot="9"><b>ST</b><span>9</span><small>Empty</small></div><div class="ob-player" data-ob-slot="10"><b>ST</b><span>10</span><small>Empty</small></div></div>
+        <div class="pitch-row midfield"><div class="ob-player" data-ob-slot="5"><b>MID</b><span>7</span><small>Empty</small></div><div class="ob-player" data-ob-slot="6"><b>MID</b><span>8</span><small>Empty</small></div><div class="ob-player" data-ob-slot="7"><b>MID</b><span>6</span><small>Empty</small></div><div class="ob-player" data-ob-slot="8"><b>MID</b><span>11</span><small>Empty</small></div></div>
+        <div class="pitch-row defence"><div class="ob-player" data-ob-slot="1"><b>DEF</b><span>3</span><small>Empty</small></div><div class="ob-player" data-ob-slot="2"><b>DEF</b><span>4</span><small>Empty</small></div><div class="ob-player" data-ob-slot="3"><b>DEF</b><span>5</span><small>Empty</small></div><div class="ob-player" data-ob-slot="4"><b>DEF</b><span>2</span><small>Empty</small></div></div>
+        <div class="pitch-row keeper"><div class="ob-player" data-ob-slot="0"><b>GK</b><span>1</span><small>Empty</small></div></div>
+      </div>
+      <div class="obscure-pitch-foot"><span>ONE PLAYER CAN ONLY BE PICKED ONCE</span><span>100 POINTS PER SLOT MAX</span></div>
+    </div>
+    <div class="obscure-question-card">
+      <div class="obscure-question-top"><span id="obscureSlotLabel" class="draw-badge">POSITION 1 OF 11</span><span id="obscurePosition" class="stage">GK</span></div>
+      <div id="obscureTimer" class="clock"><span id="obscureTimerLabel" class="clock-label">25 SECONDS</span><div class="clock-track"><div id="obscureTimerFill" class="clock-fill"></div></div></div>
+      <div class="eyebrow">NAME A PLAYER WHO FITS</div>
+      <h2 id="obscureQuestion" class="obscure-question">Name a player who made a Premier League appearance for this club.</h2>
+      <p id="obscureHint" class="obscure-hint">There are multiple correct answers. The less obvious the player, the higher the score.</p>
+      <form id="obscureForm" class="obscure-entry"><input id="obscureAnswer" class="input" type="text" maxlength="160" autocomplete="off" placeholder="TYPE A PLAYER'S NAME" aria-label="Player name"><button id="obscureSubmit" class="btn small" type="submit">LOCK IN</button></form>
+      <div id="obscureMessage" class="obscure-message" role="status" aria-live="polite">You have 25 seconds. An accepted name fills the shirt and adds its rarity points.</div>
+      <div class="obscure-rule-note"><span>RARITY SCORE</span><strong>1–100</strong><small>Based on Premier League appearance volume. Fewer appearances earn more points.</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="obscureResultView" class="view hidden">
+  <div class="topline"><div><div class="eyebrow">FULL-TIME • YOUR FORMATION</div><h1 class="page-title">OBSCURE XI REPORT</h1></div><button id="obscureResultHome" class="back">CLUBHOUSE</button></div>
+  <div class="obscure-result-head">
+    <div><div class="eyebrow">YOUR OBSCURITY SCORE</div><div class="obscure-result-score"><strong id="obscureFinalScore">0</strong><span>/ 1100</span></div><p id="obscureFinalCopy">Your 4-4-2 is ready.</p></div>
+    <div class="obscure-result-stats"><div><strong id="obscureFilledCount">0 / 11</strong><span>PLAYERS NAMED</span></div><div><strong id="obscureAverage">0</strong><span>AVERAGE POINTS</span></div></div>
+  </div>
+  <div id="obscureResultPitch" class="obscure-pitch result-pitch"></div>
+  <div class="answer-sheet-wrap"><div class="tile-head"><h3>THE ANSWER SHEETS</h3><span class="quiet">OTHER VALID PICKS</span></div><p class="obscure-sheet-intro">See other accepted players for every club and position. Higher point values are rarer picks.</p><div id="obscureAnswerSheets" class="obscure-answer-sheets"></div></div>
 </section>
 
 <section id="puzzleView" class="view hidden">
