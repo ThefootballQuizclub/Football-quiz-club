@@ -199,7 +199,7 @@ footer{padding:23px;text-align:center;border-top:1px solid #dff2df14;color:#6e81
       <p id="obscureHint" class="obscure-hint">There are multiple correct answers. The less obvious the player, the higher the score.</p>
       <form id="obscureForm" class="obscure-entry"><input id="obscureAnswer" class="input" type="text" maxlength="160" autocomplete="off" placeholder="TYPE A PLAYER'S NAME" aria-label="Player name"><button id="obscureSubmit" class="btn small" type="submit">LOCK IN</button></form>
       <div id="obscureMessage" class="obscure-message" role="status" aria-live="polite">You have 25 seconds. An accepted name fills the shirt and adds its rarity points.</div>
-      <div class="obscure-rule-note"><span>RARITY SCORE</span><strong>1–100</strong><small>Based on Premier League appearance volume. Fewer appearances earn more points.</small></div>
+      <div class="obscure-rule-note"><span>RARITY SCORE</span><strong>1–100</strong><small>Fewer Premier League appearances earn more points. Some newer careers use an estimated historical appearance total.</small></div>
     </div>
   </div>
 </section>
@@ -778,6 +778,7 @@ async function beginObscureSlot(){
   try{
     const d=await quizApi({action:"obscure_begin",token:obscureToken});
     obscurePrompt=d.prompt;obscureIndex=Number(d.index);obscurePicks=Array.isArray(d.picks)?d.picks:obscurePicks;
+    $("obscureDateLabel").textContent=(d.challenge_date||ukDailyDate())+" • DAILY XI";
     obscureTotalScore=Number(d.total_score??obscureTotalScore);
     obscureTimeLimit=Number(d.time_limit_seconds)||25;
     obscureDeadline=Date.parse(d.question_started_at)+obscureTimeLimit*1000;
@@ -820,7 +821,13 @@ async function startObscureXi(){
     await beginObscureSlot();
   }catch(e){
     if(e.data?.code==="OBSCURE_ALREADY_PLAYED"){
-      notify("You've completed today's Obscure XI. A new formation arrives at 8am tomorrow.");
+      try{
+        const savedResult=await quizApi({action:"obscure_result"});
+        showObscureResult(savedResult);
+        notify("Today's Obscure XI is complete. Here's your saved formation and answer sheet.");
+      }catch(resultError){
+        notify("You've completed today's Obscure XI. A new formation arrives at 8am tomorrow.");
+      }
       loadStats();
     }else notify(e.message||"The Obscure XI could not be started.");
   }
